@@ -108,12 +108,10 @@
               <v-col cols="12" md="6">
                 <v-card class="pa-6 h-100" elevation="2">
                   <v-icon size="60" color="primary" class="mb-4">mdi-star-circle</v-icon>
-                  <h3 class="text-h5 font-weight-bold mb-4">Features</h3>
+                  <h3 class="text-h5 font-weight-bold mb-4">About us</h3>
                   <v-list dense>
                     <v-list-item v-for="(feature, i) in features" :key="i">
-                      <v-list-item-icon>
-                        <v-icon color="success">mdi-check-circle</v-icon>
-                      </v-list-item-icon>
+                     
                       <v-list-item-content>
                         <v-list-item-title class="text-body-1">{{ feature }}</v-list-item-title>
                       </v-list-item-content>
@@ -152,34 +150,8 @@
               </v-col>
               
               <v-col cols="12" md="10" lg="8" class="mx-auto">
-                <v-timeline align-top dense>
-                  <v-timeline-item
-                    v-for="(step, i) in instructions"
-                    :key="i"
-                    :color="stepColors[i]"
-                    size="small"
-                    fill-dot
-                  >
-                    <template v-slot:opposite>
-                      <span class="text-h6 font-weight-bold">Step {{ i + 1 }}</span>
-                    </template>
-                    <v-card class="pa-4" elevation="2">
-                      <v-card-title class="text-h5 d-flex align-center">
-                        <v-icon left :color="stepColors[i]" class="mr-2">{{ step.icon }}</v-icon>
-                        {{ step.title }}
-                      </v-card-title>
-                      <v-card-text class="text-body-1">
-                        {{ step.description }}
-                      </v-card-text>
-                      <v-card-actions v-if="step.note">
-                        <v-alert type="info" density="compact" class="mt-2 w-100">
-                          <v-icon small left>mdi-information</v-icon>
-                          {{ step.note }}
-                        </v-alert>
-                      </v-card-actions>
-                    </v-card>
-                  </v-timeline-item>
-                </v-timeline>
+             <h3>How to create an account</h3>
+
               </v-col>
             </v-row>
           </v-container>
@@ -329,12 +301,7 @@ const navItems = [
 ]
 
 const features = ref([
-  'Easy to use shopping interface',
-  'Fast and reliable performance',
-  'Secure payment processing',
-  'Regular product updates',
-  'Offline shopping cart',
-  'Cross-store compatibility'
+  'We are a students from Caraga State University and we have develop an application for business owners and consumers/online consumers, that we believe can help improve the purchase experience of buyers and help shops or businesses grow and more visible to online shoppers'
 ])
 
 const appInfo = ref({
