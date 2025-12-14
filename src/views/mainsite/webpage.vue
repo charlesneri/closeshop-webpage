@@ -116,6 +116,7 @@ const features = ref([
   'Improves shopping experience for consumers',
   'Easy-to-use interface for all users',
   'Display shop on the map for better visibility and connectivity',
+  'Location-based Platform to connect local businesses and customers'
 ])
 
 const appInfo = ref({
