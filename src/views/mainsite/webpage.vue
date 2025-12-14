@@ -9,7 +9,7 @@ const downloadSuccess = ref(false)
 const downloadError = ref('')
 
 // Using placeholder images from Picsum
-const logoUrl = ref('https://picsum.photos/120/120?random=1')
+const logoUrl = ref('/logo.png')
 const heroImage = ref('https://picsum.photos/800/400?random=2&blur=1')
 const guideImages = {
   account: 'https://picsum.photos/600/300?random=3',
@@ -31,17 +31,13 @@ const features = ref([
   'Helps business owners grow online visibility',
   'Improves shopping experience for consumers',
   'Easy-to-use interface for all users',
-  'Secure transactions and user data protection'
+ 'Display shop on the map for better visibility and connectivity',
 ])
 
 const appInfo = ref({
-  Developer: 'Closeshop Team',
-  Version: '1.0.0',
+  Developer: 'Charles Q. Neri, Queen Zayvy P. Israel,  Nel O. Ochate',
   Size: '25 MB',
   Requires: 'Android 8.0 or higher',
-  'Last Updated': 'December 2024',
-  Category: 'Shopping',
-  Price: 'Free'
 })
 
 const guideSteps = ref([
@@ -258,7 +254,7 @@ onMounted(() => {
                 ></v-img>
 
                 <h1 class="text-h3 text-md-h2 font-weight-bold mb-4">
-                  Transform Your Shopping Experience
+Closeshop
                 </h1>
 
                 <p class="text-h6 text-md-h5 mb-8 text-grey-darken-2">
@@ -287,7 +283,7 @@ onMounted(() => {
                   {{ isLoading ? 'Downloading...' : 'Get Closeshop Now' }}
                 </v-btn>
 
-                <div class="mt-8">
+              <!--  <div class="mt-8">
                   <v-chip class="ma-1" color="primary" text-color="white" size="small">
                     <v-icon left size="small">mdi-shield-check</v-icon>
                     Secure
@@ -300,7 +296,7 @@ onMounted(() => {
                     <v-icon left size="small">mdi-star</v-icon>
                     4.8 Rating
                   </v-chip>
-                </div>
+                </div>-->
               </v-card>
             </v-col>
           </v-row>
