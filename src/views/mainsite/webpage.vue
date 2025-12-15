@@ -138,15 +138,6 @@ const navItems = [
   { title: 'Download', value: 'download-section', icon: 'mdi-download' },
 ]
 
-const features = ref([
-  'Developed by Caraga State University students',
-  'Helps business owners grow online visibility',
-  'Improves shopping experience for consumers',
-  'Easy-to-use interface for all users',
-  'Display shop on the map for better visibility and connectivity',
-  'Location-based Platform to connect local businesses and customers',
-])
-
 const appInfo = ref({
   Developer: 'Charles Q. Neri, Queen Zayvy P. Israel, Nel O. Ochate',
   Size: '12.7 MB',
@@ -365,7 +356,7 @@ onMounted(() => {
         class="ml-2 mr-4"
         contain
       ></v-img>
-      <v-toolbar-title class="font-weight-bold text-white">Closeshop</v-toolbar-title>
+      <v-toolbar-title class="font-weight-bold text-white responsive-toolbar-title">Closeshop</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -378,11 +369,11 @@ onMounted(() => {
           @click="scrollToSection(item.value)"
           variant="text"
           color="white"
-          class="mx-1"
+          class="mx-1 responsive-nav-btn"
           rounded
         >
           <v-icon left size="small">{{ item.icon }}</v-icon>
-          {{ item.title }}
+          <span class="responsive-btn-text">{{ item.title }}</span>
         </v-btn>
       </div>
     </v-app-bar>
@@ -394,11 +385,12 @@ onMounted(() => {
           v-for="item in navItems"
           :key="item.value"
           @click="scrollToSection(item.value)"
+          class="responsive-drawer-item"
         >
           <template v-slot:prepend>
             <v-icon>{{ item.icon }}</v-icon>
           </template>
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item-title class="responsive-list-text">{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -416,13 +408,13 @@ onMounted(() => {
                   alt="Closeshop Logo"
                   max-height="140"
                   max-width="140"
-                  class="mx-auto mb-8 logo-pulse"
+                  class="mx-auto mb-8 logo-pulse responsive-logo"
                   contain
                 ></v-img>
 
-                <h1 class="text-h3 text-md-h2 font-weight-bold mb-4 gradient-text">Closeshop</h1>
+                <h1 class="responsive-h1 gradient-text">Closeshop</h1>
 
-                <p class="text-h6 text-md-h5 mb-8 text-grey-darken-2">
+                <p class="responsive-hero-subtitle">
                   Connecting businesses with customers seamlessly
                 </p>
 
@@ -430,7 +422,7 @@ onMounted(() => {
                 <v-btn
                   :style="{ background: colorPalette.primary.gradient }"
                   size="x-large"
-                  class="mb-4 download-btn"
+                  class="mb-4 download-btn responsive-download-btn"
                   @click="downloadAPK"
                   rounded
                   elevation="4"
@@ -445,42 +437,44 @@ onMounted(() => {
                     ></v-progress-circular>
                   </template>
                   <v-icon left>mdi-download</v-icon>
-                  {{
-                    isLoading
-                      ? 'Downloading...'
-                      : isMobileDevice
-                        ? 'Get on Android'
-                        : 'Get Closeshop Now'
-                  }}
+                  <span class="responsive-btn-label">
+                    {{
+                      isLoading
+                        ? 'Downloading...'
+                        : isMobileDevice
+                          ? 'Get on Android'
+                          : 'Get Closeshop Now'
+                    }}
+                  </span>
                 </v-btn>
 
                 <div class="mt-8">
                   <v-chip
-                    class="ma-1"
+                    class="ma-1 responsive-chip"
                     :color="colorPalette.primary.main"
                     text-color="white"
                     size="small"
                   >
                     <v-icon left size="small">mdi-shield-check</v-icon>
-                    Secure
+                    <span class="responsive-chip-text">Secure</span>
                   </v-chip>
                   <v-chip
-                    class="ma-1"
+                    class="ma-1 responsive-chip"
                     :color="colorPalette.primary.main"
                     text-color="white"
                     size="small"
                   >
                     <v-icon left size="small">mdi-account-group</v-icon>
-                    10K+ Users
+                    <span class="responsive-chip-text">10K+ Users</span>
                   </v-chip>
                   <v-chip
-                    class="ma-1"
+                    class="ma-1 responsive-chip"
                     :color="colorPalette.primary.main"
                     text-color="white"
                     size="small"
                   >
                     <v-icon left size="small">mdi-star</v-icon>
-                    4.8 Rating
+                    <span class="responsive-chip-text">4.8 Rating</span>
                   </v-chip>
                 </div>
               </v-card>
@@ -494,8 +488,8 @@ onMounted(() => {
         <v-container>
           <v-row>
             <v-col cols="12" class="text-center mb-12">
-              <h2 class="text-h3 font-weight-bold mb-4 section-title">About Closeshop</h2>
-              <p class="text-h6 text-grey-darken-1 max-width-800 mx-auto">
+              <h2 class="responsive-section-title">About Closeshop</h2>
+              <p class="responsive-section-subtitle">
                 A revolutionary shopping platform developed by Caraga State University students
               </p>
               <v-divider width="100" class="mx-auto mt-6 primary-divider"></v-divider>
@@ -508,21 +502,78 @@ onMounted(() => {
                   <div class="icon-wrapper mr-4">
                     <v-icon size="48" :color="colorPalette.primary.main">mdi-star-circle</v-icon>
                   </div>
-                  <h3 class="text-h4 font-weight-bold">Key Features</h3>
+                  <h3 class="responsive-feature-title">Key Features</h3>
                 </div>
-                <v-list lines="two" class="py-0">
-                  <v-list-item
-                    v-for="(feature, i) in features"
-                    :key="i"
-                    class="px-0 mb-3 feature-item"
-                  >
+                <v-list lines="two" class="py-0 feature-list">
+                  <!-- Feature 1 -->
+                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
                     <template v-slot:prepend>
-                      <v-icon :color="colorPalette.primary.main" class="mr-4"
-                        >mdi-check-circle</v-icon
-                      >
+                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
+                        mdi-school
+                      </v-icon>
                     </template>
-                    <v-list-item-title class="text-body-1 font-weight-medium">
-                      {{ feature }}
+                    <v-list-item-title class="responsive-feature-text">
+                      Developed by Caraga State University students
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <!-- Feature 2 -->
+                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
+                    <template v-slot:prepend>
+                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
+                        mdi-chart-line
+                      </v-icon>
+                    </template>
+                    <v-list-item-title class="responsive-feature-text">
+                      Helps business owners grow online visibility
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <!-- Feature 3 -->
+                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
+                    <template v-slot:prepend>
+                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
+                        mdi-cart
+                      </v-icon>
+                    </template>
+                    <v-list-item-title class="responsive-feature-text">
+                      Improves shopping experience for consumers
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <!-- Feature 4 -->
+                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
+                    <template v-slot:prepend>
+                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
+                        mdi-account-group
+                      </v-icon>
+                    </template>
+                    <v-list-item-title class="responsive-feature-text">
+                      Easy-to-use interface for all users
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <!-- Feature 5 -->
+                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
+                    <template v-slot:prepend>
+                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
+                        mdi-map-marker
+                      </v-icon>
+                    </template>
+                    <v-list-item-title class="responsive-feature-text">
+                      Display shop on the map for better visibility and connectivity
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <!-- Feature 6 -->
+                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
+                    <template v-slot:prepend>
+                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
+                        mdi-handshake
+                      </v-icon>
+                    </template>
+                    <v-list-item-title class="responsive-feature-text">
+                      Location-based Platform to connect local businesses and customers
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -536,16 +587,46 @@ onMounted(() => {
                   <div class="icon-wrapper mr-4">
                     <v-icon size="48" :color="colorPalette.primary.main">mdi-information</v-icon>
                   </div>
-                  <h3 class="text-h4 font-weight-bold">App Details</h3>
+                  <h3 class="responsive-feature-title">App Details</h3>
                 </div>
-                <v-simple-table>
+                <v-simple-table class="app-info-table">
                   <template v-slot:default>
                     <tbody>
-                      <tr v-for="(info, key) in appInfo" :key="key" class="info-row">
-                        <td class="font-weight-bold text-body-1 py-3" style="color: #3f83c7">
-                          {{ key }}
+                      <!-- Developer -->
+                      <tr class="info-row responsive-info-row">
+                        <td class="font-weight-bold responsive-table-header py-3" style="color: #3f83c7">
+                          Developer
                         </td>
-                        <td class="text-body-1 py-3">{{ info }}</td>
+                        <td class="responsive-table-data py-3">
+                          <span class="app-info-text">Charles Q. Neri, Queen Zayvy P. Israel, Nel O. Ochate</span>
+                        </td>
+                      </tr>
+                      <!-- Size -->
+                      <tr class="info-row responsive-info-row">
+                        <td class="font-weight-bold responsive-table-header py-3" style="color: #3f83c7">
+                          Size
+                        </td>
+                        <td class="responsive-table-data py-3">
+                          <span class="app-info-text">12.7 MB</span>
+                        </td>
+                      </tr>
+                      <!-- Requires -->
+                      <tr class="info-row responsive-info-row">
+                        <td class="font-weight-bold responsive-table-header py-3" style="color: #3f83c7">
+                          Requires
+                        </td>
+                        <td class="responsive-table-data py-3">
+                          <span class="app-info-text">Android 8.0 or higher</span>
+                        </td>
+                      </tr>
+                      <!-- Last Updated -->
+                      <tr class="info-row responsive-info-row">
+                        <td class="font-weight-bold responsive-table-header py-3" style="color: #3f83c7">
+                          Last Updated
+                        </td>
+                        <td class="responsive-table-data py-3">
+                          <span class="app-info-text">December 2025</span>
+                        </td>
                       </tr>
                     </tbody>
                   </template>
@@ -561,8 +642,8 @@ onMounted(() => {
         <v-container>
           <v-row>
             <v-col cols="12" class="text-center mb-12">
-              <h2 class="text-h3 font-weight-bold mb-4 section-title">User Guide</h2>
-              <p class="text-h6 text-grey-darken-1 max-width-800 mx-auto">
+              <h2 class="responsive-section-title">User Guide</h2>
+              <p class="responsive-section-subtitle">
                 Learn how to make the most of Closeshop with our step-by-step guides
               </p>
               <v-divider width="100" class="mx-auto mt-6 primary-divider"></v-divider>
@@ -575,7 +656,7 @@ onMounted(() => {
                   <v-icon size="48" :color="colorPalette.primary.main" class="mr-4"
                     >mdi-account-plus</v-icon
                   >
-                  <h3 class="text-h4 font-weight-bold">How to Create an Account</h3>
+                  <h3 class="responsive-guide-title">How to Create an Account</h3>
                 </div>
 
                 <v-stepper v-model="accountCreationStep" class="elevation-0">
@@ -584,8 +665,9 @@ onMounted(() => {
                       :complete="accountCreationStep > 1"
                       step="1"
                       :color="colorPalette.primary.main"
+                      class="responsive-stepper-step"
                     >
-                      Register Account
+                      <span class="responsive-step-text">Register Account</span>
                     </v-stepper-step>
 
                     <v-divider></v-divider>
@@ -594,21 +676,22 @@ onMounted(() => {
                       :complete="accountCreationStep > 2"
                       step="2"
                       :color="colorPalette.primary.main"
+                      class="responsive-stepper-step"
                     >
-                      Verify Email
+                      <span class="responsive-step-text">Verify Email</span>
                     </v-stepper-step>
 
                     <v-divider></v-divider>
 
-                    <v-stepper-step step="3" :color="colorPalette.primary.main">
-                      Login to Account
+                    <v-stepper-step step="3" :color="colorPalette.primary.main" class="responsive-stepper-step">
+                      <span class="responsive-step-text">Login to Account</span>
                     </v-stepper-step>
                   </v-stepper-header>
 
                   <v-stepper-items>
                     <v-stepper-content step="1">
                       <div class="step-content">
-                        <h4 class="text-h6 font-weight-bold mb-4 step-title">
+                        <h4 class="responsive-step-title">
                           {{ accountCreationImages[0].title }}
                         </h4>
 
@@ -632,11 +715,11 @@ onMounted(() => {
                           </v-img>
                           <div class="image-overlay">
                             <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2">Click to zoom</span>
+                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
                           </div>
                         </div>
 
-                        <p class="text-body-1 instruction">
+                        <p class="responsive-instruction">
                           {{ accountCreationImages[0].description }}
                         </p>
                         <div class="text-center mt-6">
@@ -645,8 +728,9 @@ onMounted(() => {
                             @click="nextAccountStep"
                             variant="flat"
                             size="large"
+                            class="responsive-guide-btn"
                           >
-                            Next Step
+                            <span class="responsive-btn-text">Next Step</span>
                             <v-icon right>mdi-arrow-right</v-icon>
                           </v-btn>
                         </div>
@@ -655,7 +739,7 @@ onMounted(() => {
 
                     <v-stepper-content step="2">
                       <div class="step-content">
-                        <h4 class="text-h6 font-weight-bold mb-4 step-title">
+                        <h4 class="responsive-step-title">
                           {{ accountCreationImages[1].title }}
                         </h4>
 
@@ -679,25 +763,26 @@ onMounted(() => {
                           </v-img>
                           <div class="image-overlay">
                             <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2">Click to zoom</span>
+                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
                           </div>
                         </div>
 
-                        <p class="text-body-1 instruction">
+                        <p class="responsive-instruction">
                           {{ accountCreationImages[1].description }}
                         </p>
-                        <div class="d-flex justify-space-between mt-6">
-                          <v-btn variant="outlined" @click="prevAccountStep" size="large">
+                        <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
+                          <v-btn variant="outlined" @click="prevAccountStep" size="large" class="responsive-guide-btn">
                             <v-icon left>mdi-arrow-left</v-icon>
-                            Previous
+                            <span class="responsive-btn-text">Previous</span>
                           </v-btn>
                           <v-btn
                             :color="colorPalette.primary.main"
                             @click="nextAccountStep"
                             variant="flat"
                             size="large"
+                            class="responsive-guide-btn"
                           >
-                            Next Step
+                            <span class="responsive-btn-text">Next Step</span>
                             <v-icon right>mdi-arrow-right</v-icon>
                           </v-btn>
                         </div>
@@ -706,7 +791,7 @@ onMounted(() => {
 
                     <v-stepper-content step="3">
                       <div class="step-content">
-                        <h4 class="text-h6 font-weight-bold mb-4 step-title">
+                        <h4 class="responsive-step-title">
                           {{ accountCreationImages[2].title }}
                         </h4>
 
@@ -730,26 +815,27 @@ onMounted(() => {
                           </v-img>
                           <div class="image-overlay">
                             <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2">Click to zoom</span>
+                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
                           </div>
                         </div>
 
-                        <p class="text-body-1 instruction">
+                        <p class="responsive-instruction">
                           {{ accountCreationImages[2].description }}
                         </p>
-                        <div class="d-flex justify-space-between mt-6">
-                          <v-btn variant="outlined" @click="prevAccountStep" size="large">
+                        <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
+                          <v-btn variant="outlined" @click="prevAccountStep" size="large" class="responsive-guide-btn">
                             <v-icon left>mdi-arrow-left</v-icon>
-                            Previous
+                            <span class="responsive-btn-text">Previous</span>
                           </v-btn>
                           <v-btn
                             :color="colorPalette.primary.main"
                             @click="restartAccountGuide"
                             variant="flat"
                             size="large"
+                            class="responsive-guide-btn"
                           >
                             <v-icon left>mdi-restart</v-icon>
-                            Restart Guide
+                            <span class="responsive-btn-text">Restart Guide</span>
                           </v-btn>
                         </div>
                       </div>
@@ -766,7 +852,7 @@ onMounted(() => {
                   <v-icon size="48" :color="colorPalette.primary.main" class="mr-4"
                     >mdi-store-plus</v-icon
                   >
-                  <h3 class="text-h4 font-weight-bold">How to Create a Shop</h3>
+                  <h3 class="responsive-guide-title">How to Create a Shop</h3>
                 </div>
 
                 <v-stepper v-model="shopCreationStep" class="elevation-0">
@@ -775,8 +861,9 @@ onMounted(() => {
                       :complete="shopCreationStep > 1"
                       step="1"
                       :color="colorPalette.primary.main"
+                      class="responsive-stepper-step"
                     >
-                      Access Create Shop
+                      <span class="responsive-step-text">Access Create Shop</span>
                     </v-stepper-step>
 
                     <v-divider></v-divider>
@@ -785,21 +872,22 @@ onMounted(() => {
                       :complete="shopCreationStep > 2"
                       step="2"
                       :color="colorPalette.primary.main"
+                      class="responsive-stepper-step"
                     >
-                      Fill Shop Details
+                      <span class="responsive-step-text">Fill Shop Details</span>
                     </v-stepper-step>
 
                     <v-divider></v-divider>
 
-                    <v-stepper-step step="3" :color="colorPalette.primary.main">
-                      Wait for Approval
+                    <v-stepper-step step="3" :color="colorPalette.primary.main" class="responsive-stepper-step">
+                      <span class="responsive-step-text">Wait for Approval</span>
                     </v-stepper-step>
                   </v-stepper-header>
 
                   <v-stepper-items>
                     <v-stepper-content step="1">
                       <div class="step-content">
-                        <h4 class="text-h6 font-weight-bold mb-4 step-title">
+                        <h4 class="responsive-step-title">
                           {{ shopGuideImages[0].title }}
                         </h4>
 
@@ -823,11 +911,11 @@ onMounted(() => {
                           </v-img>
                           <div class="image-overlay">
                             <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2">Click to zoom</span>
+                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
                           </div>
                         </div>
 
-                        <p class="text-body-1 instruction">
+                        <p class="responsive-instruction">
                           {{ shopGuideImages[0].description }}
                         </p>
                         <div class="text-center mt-6">
@@ -836,8 +924,9 @@ onMounted(() => {
                             @click="nextShopStep"
                             variant="flat"
                             size="large"
+                            class="responsive-guide-btn"
                           >
-                            Next Step
+                            <span class="responsive-btn-text">Next Step</span>
                             <v-icon right>mdi-arrow-right</v-icon>
                           </v-btn>
                         </div>
@@ -846,7 +935,7 @@ onMounted(() => {
 
                     <v-stepper-content step="2">
                       <div class="step-content">
-                        <h4 class="text-h6 font-weight-bold mb-4 step-title">
+                        <h4 class="responsive-step-title">
                           {{ shopGuideImages[1].title }}
                         </h4>
 
@@ -870,25 +959,26 @@ onMounted(() => {
                           </v-img>
                           <div class="image-overlay">
                             <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2">Click to zoom</span>
+                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
                           </div>
                         </div>
 
-                        <p class="text-body-1 instruction">
+                        <p class="responsive-instruction">
                           {{ shopGuideImages[1].description }}
                         </p>
-                        <div class="d-flex justify-space-between mt-6">
-                          <v-btn variant="outlined" @click="prevShopStep" size="large">
+                        <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
+                          <v-btn variant="outlined" @click="prevShopStep" size="large" class="responsive-guide-btn">
                             <v-icon left>mdi-arrow-left</v-icon>
-                            Previous
+                            <span class="responsive-btn-text">Previous</span>
                           </v-btn>
                           <v-btn
                             :color="colorPalette.primary.main"
                             @click="nextShopStep"
                             variant="flat"
                             size="large"
+                            class="responsive-guide-btn"
                           >
-                            Next Step
+                            <span class="responsive-btn-text">Next Step</span>
                             <v-icon right>mdi-arrow-right</v-icon>
                           </v-btn>
                         </div>
@@ -897,7 +987,7 @@ onMounted(() => {
 
                     <v-stepper-content step="3">
                       <div class="step-content">
-                        <h4 class="text-h6 font-weight-bold mb-4 step-title">
+                        <h4 class="responsive-step-title">
                           {{ shopGuideImages[2].title }}
                         </h4>
 
@@ -921,26 +1011,27 @@ onMounted(() => {
                           </v-img>
                           <div class="image-overlay">
                             <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2">Click to zoom</span>
+                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
                           </div>
                         </div>
 
-                        <p class="text-body-1 instruction">
+                        <p class="responsive-instruction">
                           {{ shopGuideImages[2].description }}
                         </p>
-                        <div class="d-flex justify-space-between mt-6">
-                          <v-btn variant="outlined" @click="prevShopStep" size="large">
+                        <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
+                          <v-btn variant="outlined" @click="prevShopStep" size="large" class="responsive-guide-btn">
                             <v-icon left>mdi-arrow-left</v-icon>
-                            Previous
+                            <span class="responsive-btn-text">Previous</span>
                           </v-btn>
                           <v-btn
                             :color="colorPalette.primary.main"
                             @click="restartShopGuide"
                             variant="flat"
                             size="large"
+                            class="responsive-guide-btn"
                           >
                             <v-icon left>mdi-restart</v-icon>
-                            Restart Guide
+                            <span class="responsive-btn-text">Restart Guide</span>
                           </v-btn>
                         </div>
                       </div>
@@ -957,10 +1048,10 @@ onMounted(() => {
                   <v-icon size="48" :color="colorPalette.primary.main" class="mr-4"
                     >mdi-navigation</v-icon
                   >
-                  <h3 class="text-h4 font-weight-bold">App Navigation Guide</h3>
+                  <h3 class="responsive-guide-title">App Navigation Guide</h3>
                 </div>
 
-                <p class="text-body-1 mb-6">
+                <p class="responsive-guide-intro">
                   Explore the main sections of the Closeshop app. Click on any image to view it in
                   full screen.
                 </p>
@@ -994,8 +1085,8 @@ onMounted(() => {
                         </div>
                       </div>
 
-                      <h4 class="text-h6 font-weight-bold mb-2">{{ image.title }}</h4>
-                      <p class="text-body-2">
+                      <h4 class="responsive-nav-title">{{ image.title }}</h4>
+                      <p class="responsive-nav-description">
                         {{ image.description }}
                       </p>
                     </div>
@@ -1021,9 +1112,9 @@ onMounted(() => {
                   <v-icon size="80" color="white">mdi-android</v-icon>
                 </div>
 
-                <h2 class="text-h3 font-weight-bold mb-4 text-white">Ready to Get Started?</h2>
+                <h2 class="responsive-download-title text-white">Ready to Get Started?</h2>
 
-                <p class="text-h6 mb-6 text-white">
+                <p class="responsive-download-subtitle text-white">
                   Join thousands of satisfied users. Download Closeshop today and transform your
                   shopping experience.
                 </p>
@@ -1033,7 +1124,7 @@ onMounted(() => {
                   size="x-large"
                   @click="downloadAPK"
                   rounded
-                  class="px-8 mb-4 download-action-btn"
+                  class="px-8 mb-4 download-action-btn responsive-download-action-btn"
                   :loading="isLoading"
                   :disabled="isLoading"
                 >
@@ -1045,44 +1136,46 @@ onMounted(() => {
                     ></v-progress-circular>
                   </template>
                   <v-icon left>mdi-download</v-icon>
-                  {{
-                    isLoading
-                      ? 'Downloading...'
-                      : isMobileDevice
-                        ? 'Download for Android'
-                        : 'Download Free APK'
-                  }}
+                  <span class="responsive-btn-label">
+                    {{
+                      isLoading
+                        ? 'Downloading...'
+                        : isMobileDevice
+                          ? 'Download for Android'
+                          : 'Download Free APK'
+                    }}
+                  </span>
                 </v-btn>
 
                 <div class="mt-8">
-                  <p class="text-body-2 mb-2 text-white">Version 1.0.0 • 25 MB • Android 8.0+</p>
+                  <p class="responsive-download-info text-white">Version 1.0.0 • 25 MB • Android 8.0+</p>
                   <div>
                     <v-chip
-                      class="ma-1"
+                      class="ma-1 responsive-chip"
                       color="white"
                       :text-color="colorPalette.primary.main"
                       size="small"
                     >
                       <v-icon left size="small">mdi-shield-check</v-icon>
-                      No Ads
+                      <span class="responsive-chip-text">No Ads</span>
                     </v-chip>
                     <v-chip
-                      class="ma-1"
+                      class="ma-1 responsive-chip"
                       color="white"
                       :text-color="colorPalette.primary.main"
                       size="small"
                     >
                       <v-icon left size="small">mdi-update</v-icon>
-                      Regular Updates
+                      <span class="responsive-chip-text">Regular Updates</span>
                     </v-chip>
                     <v-chip
-                      class="ma-1"
+                      class="ma-1 responsive-chip"
                       color="white"
                       :text-color="colorPalette.primary.main"
                       size="small"
                     >
                       <v-icon left size="small">mdi-headset</v-icon>
-                      Free Support
+                      <span class="responsive-chip-text">Free Support</span>
                     </v-chip>
                   </div>
                 </div>
@@ -1104,11 +1197,11 @@ onMounted(() => {
                 alt="Closeshop Logo"
                 max-height="40"
                 max-width="40"
-                class="mr-3"
+                class="mr-3 responsive-footer-logo"
               ></v-img>
-              <h3 class="text-h5 font-weight-bold text-white">Closeshop</h3>
+              <h3 class="responsive-footer-title text-white">Closeshop</h3>
             </div>
-            <p class="text-white mb-0">
+            <p class="responsive-footer-text text-white mb-0">
               © 2024 Closeshop Team, Caraga State University. All rights reserved.
             </p>
           </v-col>
@@ -1123,14 +1216,14 @@ onMounted(() => {
                 icon
                 variant="text"
                 size="small"
-                class="mx-2"
+                class="mx-2 responsive-footer-icon"
                 color="white"
                 :title="link.text"
               >
                 <v-icon>{{ link.icon }}</v-icon>
               </v-btn>
             </div>
-            <p class="text-caption text-white">closeshop@example.com • +63 123 456 7890</p>
+            <p class="responsive-footer-contact text-white">closeshop@example.com • +63 123 456 7890</p>
           </v-col>
         </v-row>
       </v-container>
@@ -1139,7 +1232,7 @@ onMounted(() => {
     <!-- Download Dialog -->
     <v-dialog v-model="downloadDialog" max-width="500">
       <v-card>
-        <v-card-title class="text-h5 d-flex align-center">
+        <v-card-title class="responsive-dialog-title d-flex align-center">
           <v-icon :color="downloadSuccess ? colorPalette.success : colorPalette.primary.main" left>
             {{ downloadSuccess ? 'mdi-check-circle' : 'mdi-download' }}
           </v-icon>
@@ -1148,15 +1241,15 @@ onMounted(() => {
 
         <v-card-text>
           <div v-if="isMobileDevice && /Android/i.test(navigator.userAgent)" class="mb-4">
-            <v-alert type="info" density="compact" class="mb-4">
+            <v-alert type="info" density="compact" class="mb-4 responsive-alert">
               <v-icon left>mdi-android</v-icon>
-              Android Device Detected
+              <span class="responsive-alert-text">Android Device Detected</span>
             </v-alert>
 
-            <p class="text-body-1 mb-2">
+            <p class="responsive-dialog-subtitle mb-2">
               <strong>For Android devices:</strong>
             </p>
-            <ol class="text-body-2 pl-4 mb-4">
+            <ol class="responsive-dialog-list pl-4 mb-4">
               <li>Tap "OK" or "Download" in your browser</li>
               <li>The APK will download to your device</li>
               <li>Open your file manager and locate the APK</li>
@@ -1168,33 +1261,33 @@ onMounted(() => {
             v-else-if="isMobileDevice && /iPhone|iPad|iPod/i.test(navigator.userAgent)"
             class="mb-4"
           >
-            <v-alert type="warning" density="compact" class="mb-4">
+            <v-alert type="warning" density="compact" class="mb-4 responsive-alert">
               <v-icon left>mdi-apple</v-icon>
-              iOS Device Detected
+              <span class="responsive-alert-text">iOS Device Detected</span>
             </v-alert>
 
-            <p class="text-body-1 mb-2">
+            <p class="responsive-dialog-subtitle mb-2">
               <strong>Important:</strong>
             </p>
-            <p class="text-body-2 mb-4">
+            <p class="responsive-dialog-text mb-4">
               APK files can only be installed on Android devices. Please use an Android device to
               download and install Closeshop.
             </p>
           </div>
 
-          <p v-if="downloadSuccess" class="text-body-1">
+          <p v-if="downloadSuccess" class="responsive-dialog-text">
             <v-icon :color="colorPalette.success" left>mdi-check</v-icon>
             {{ isMobileDevice ? 'Opening download...' : 'Download started successfully!' }}
           </p>
-          <p v-else class="text-body-1">
+          <p v-else class="responsive-dialog-text">
             <v-icon :color="colorPalette.primary.main" left>mdi-download</v-icon>
             Your download should begin automatically.
           </p>
 
-          <p class="text-body-2 mt-4">
+          <p class="responsive-dialog-subtitle mt-4">
             <strong>Installation Steps:</strong>
           </p>
-          <ol class="text-body-2 pl-4">
+          <ol class="responsive-dialog-list pl-4">
             <li v-if="!downloadSuccess">
               Allow installation from unknown sources in Android settings
             </li>
@@ -1204,15 +1297,15 @@ onMounted(() => {
           </ol>
 
           <div v-if="downloadError" class="mt-4">
-            <v-alert type="error" density="compact">
+            <v-alert type="error" density="compact" class="responsive-alert">
               <v-icon left>mdi-alert-circle</v-icon>
-              {{ downloadError }}
+              <span class="responsive-alert-text">{{ downloadError }}</span>
             </v-alert>
           </div>
 
           <!-- Direct download link as backup -->
           <div class="mt-6">
-            <p class="text-body-2 mb-2">If download doesn't start:</p>
+            <p class="responsive-dialog-text mb-2">If download doesn't start:</p>
             <v-btn
               :href="apkUrl"
               target="_blank"
@@ -1220,17 +1313,18 @@ onMounted(() => {
               variant="outlined"
               block
               @click="downloadDialog = false"
+              class="responsive-dialog-btn"
             >
               <v-icon left>mdi-link</v-icon>
-              Open Direct Link
+              <span class="responsive-btn-text">Open Direct Link</span>
             </v-btn>
           </div>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn :color="colorPalette.primary.main" @click="downloadDialog = false" variant="flat">
-            Got it
+          <v-btn :color="colorPalette.primary.main" @click="downloadDialog = false" variant="flat" class="responsive-dialog-btn">
+            <span class="responsive-btn-text">Got it</span>
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -1245,9 +1339,9 @@ onMounted(() => {
     >
       <v-card color="black" class="image-viewer-card">
         <v-toolbar color="transparent" density="compact" class="image-viewer-toolbar">
-          <v-toolbar-title class="text-white">{{ imageViewer.title }}</v-toolbar-title>
+          <v-toolbar-title class="text-white responsive-image-viewer-title">{{ imageViewer.title }}</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn icon @click="closeImageViewer" color="white">
+          <v-btn icon @click="closeImageViewer" color="white" class="responsive-close-btn">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
@@ -1258,7 +1352,7 @@ onMounted(() => {
             icon
             @click="navigateImages('prev', accountCreationImages)"
             v-if="accountCreationImages.find(img => img.src === imageViewer.src)"
-            class="nav-btn prev-btn"
+            class="nav-btn prev-btn responsive-nav-btn"
             color="white"
             size="x-large"
           >
@@ -1268,7 +1362,7 @@ onMounted(() => {
             icon
             @click="navigateImages('prev', shopGuideImages)"
             v-else-if="shopGuideImages.find(img => img.src === imageViewer.src)"
-            class="nav-btn prev-btn"
+            class="nav-btn prev-btn responsive-nav-btn"
             color="white"
             size="x-large"
           >
@@ -1278,7 +1372,7 @@ onMounted(() => {
             icon
             @click="navigateImages('prev', navigationImages)"
             v-else
-            class="nav-btn prev-btn"
+            class="nav-btn prev-btn responsive-nav-btn"
             color="white"
             size="x-large"
           >
@@ -1307,7 +1401,7 @@ onMounted(() => {
             icon
             @click="navigateImages('next', accountCreationImages)"
             v-if="accountCreationImages.find(img => img.src === imageViewer.src)"
-            class="nav-btn next-btn"
+            class="nav-btn next-btn responsive-nav-btn"
             color="white"
             size="x-large"
           >
@@ -1317,7 +1411,7 @@ onMounted(() => {
             icon
             @click="navigateImages('next', shopGuideImages)"
             v-else-if="shopGuideImages.find(img => img.src === imageViewer.src)"
-            class="nav-btn next-btn"
+            class="nav-btn next-btn responsive-nav-btn"
             color="white"
             size="x-large"
           >
@@ -1327,7 +1421,7 @@ onMounted(() => {
             icon
             @click="navigateImages('next', navigationImages)"
             v-else
-            class="nav-btn next-btn"
+            class="nav-btn next-btn responsive-nav-btn"
             color="white"
             size="x-large"
           >
@@ -1337,7 +1431,7 @@ onMounted(() => {
 
         <!-- Instructions -->
         <div class="image-viewer-footer">
-          <p class="text-caption text-white text-center mb-2">
+          <p class="responsive-image-viewer-hint text-center mb-2">
             Use arrow keys or buttons to navigate • Click image or press ESC to close
           </p>
         </div>
@@ -1353,7 +1447,332 @@ onMounted(() => {
   --primary-light: #6ba1d4;
   --primary-dark: #2c5c8d;
   --primary-gradient: linear-gradient(135deg, #3f83c7 0%, #5a95d1 100%);
+  
+  /* Fluid font size variables */
+  --fluid-xs: clamp(0.75rem, 2vw, 0.875rem);
+  --fluid-sm: clamp(0.875rem, 2.5vw, 1rem);
+  --fluid-base: clamp(1rem, 3vw, 1.125rem);
+  --fluid-lg: clamp(1.125rem, 3.5vw, 1.25rem);
+  --fluid-xl: clamp(1.25rem, 4vw, 1.5rem);
+  --fluid-2xl: clamp(1.5rem, 5vw, 2rem);
+  --fluid-3xl: clamp(2rem, 6vw, 2.5rem);
+  --fluid-4xl: clamp(2.5rem, 7vw, 3rem);
+  
+  /* Line heights */
+  --lh-tight: 1.2;
+  --lh-normal: 1.4;
+  --lh-relaxed: 1.6;
+  --lh-loose: 1.8;
 }
+
+/* ============ RESPONSIVE TYPOGRAPHY ============ */
+
+/* App Bar */
+.responsive-toolbar-title {
+  font-size: clamp(1.25rem, 4vw, 1.5rem) !important;
+  line-height: var(--lh-tight);
+}
+
+.responsive-nav-btn .responsive-btn-text {
+  font-size: clamp(0.875rem, 2vw, 1rem) !important;
+  line-height: var(--lh-tight);
+}
+
+.responsive-drawer-item .responsive-list-text {
+  font-size: var(--fluid-base) !important;
+  line-height: var(--lh-normal);
+}
+
+/* Hero Section */
+.responsive-h1 {
+  font-size: clamp(2rem, 8vw, 3.5rem) !important;
+  line-height: var(--lh-tight);
+  font-weight: 700;
+  margin-bottom: 1rem !important;
+}
+
+.responsive-hero-subtitle {
+  font-size: clamp(1rem, 4vw, 1.5rem) !important;
+  line-height: var(--lh-normal);
+  margin-bottom: 2rem !important;
+}
+
+.responsive-download-btn {
+  font-size: clamp(1rem, 3vw, 1.125rem) !important;
+  line-height: var(--lh-normal);
+}
+
+.responsive-btn-label {
+  font-size: inherit !important;
+  line-height: inherit !important;
+}
+
+.responsive-logo {
+  max-height: clamp(80px, 20vw, 140px) !important;
+  max-width: clamp(80px, 20vw, 140px) !important;
+}
+
+.responsive-chip .responsive-chip-text {
+  font-size: clamp(0.75rem, 2vw, 0.875rem) !important;
+  line-height: var(--lh-tight);
+}
+
+/* Section Titles */
+.responsive-section-title {
+  font-size: clamp(1.75rem, 6vw, 2.5rem) !important;
+  line-height: var(--lh-tight);
+  margin-bottom: 1rem !important;
+}
+
+.responsive-section-subtitle {
+  font-size: clamp(1rem, 3vw, 1.25rem) !important;
+  line-height: var(--lh-normal);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Features */
+.responsive-feature-title {
+  font-size: clamp(1.25rem, 4vw, 1.75rem) !important;
+  line-height: var(--lh-tight);
+}
+
+.responsive-feature-item {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.feature-icon {
+  flex-shrink: 0 !important;
+  margin-right: 12px !important;
+  font-size: 24px !important;
+}
+
+.responsive-feature-text {
+  font-size: clamp(0.875rem, 2.5vw, 1rem) !important;
+  line-height: var(--lh-relaxed) !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto !important;
+  display: block !important;
+  width: 100% !important;
+  text-align: left !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+}
+
+/* Table Text */
+.responsive-table-header {
+  font-size: clamp(0.75rem, 2vw, 0.875rem) !important;
+  line-height: var(--lh-normal);
+  min-width: 100px;
+}
+
+.responsive-table-data {
+  font-size: clamp(0.75rem, 2vw, 0.875rem) !important;
+  line-height: var(--lh-normal);
+  max-width: 200px;
+}
+
+.app-info-text {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto !important;
+  display: block !important;
+  width: 100% !important;
+  white-space: normal !important;
+}
+
+/* Guide Section */
+.responsive-guide-title {
+  font-size: clamp(1.5rem, 5vw, 2rem) !important;
+  line-height: var(--lh-tight);
+}
+
+.responsive-step-title {
+  font-size: clamp(1.125rem, 4vw, 1.5rem) !important;
+  line-height: var(--lh-normal);
+  font-weight: 600;
+  margin-bottom: 1rem !important;
+}
+
+.responsive-step-text {
+  font-size: clamp(0.75rem, 2.5vw, 0.875rem) !important;
+  line-height: var(--lh-tight);
+}
+
+.responsive-instruction {
+  font-size: var(--fluid-base) !important;
+  line-height: var(--lh-relaxed);
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+.responsive-guide-intro {
+  font-size: var(--fluid-base) !important;
+  line-height: var(--lh-relaxed);
+  margin-bottom: 1.5rem !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+.responsive-guide-btn .responsive-btn-text {
+  font-size: clamp(0.875rem, 2.5vw, 1rem) !important;
+  line-height: var(--lh-tight);
+}
+
+.responsive-stepper-step {
+  padding: 12px !important;
+}
+
+/* Navigation Cards */
+.responsive-nav-title {
+  font-size: clamp(1.125rem, 4vw, 1.25rem) !important;
+  line-height: var(--lh-tight);
+  font-weight: 600;
+  margin-bottom: 0.5rem !important;
+}
+
+.responsive-nav-description {
+  font-size: var(--fluid-sm) !important;
+  line-height: var(--lh-relaxed);
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+.responsive-overlay-text {
+  font-size: var(--fluid-xs) !important;
+  line-height: var(--lh-tight);
+}
+
+/* Download Section */
+.responsive-download-title {
+  font-size: clamp(1.75rem, 6vw, 2.5rem) !important;
+  line-height: var(--lh-tight);
+  margin-bottom: 1rem !important;
+}
+
+.responsive-download-subtitle {
+  font-size: clamp(1rem, 3vw, 1.25rem) !important;
+  line-height: var(--lh-normal);
+  margin-bottom: 2rem !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+.responsive-download-action-btn {
+  font-size: clamp(1rem, 3vw, 1.125rem) !important;
+  line-height: var(--lh-normal);
+}
+
+.responsive-download-info {
+  font-size: var(--fluid-sm) !important;
+  line-height: var(--lh-tight);
+  margin-bottom: 1rem !important;
+}
+
+/* Footer */
+.responsive-footer-title {
+  font-size: clamp(1.25rem, 4vw, 1.5rem) !important;
+  line-height: var(--lh-tight);
+}
+
+.responsive-footer-text {
+  font-size: var(--fluid-sm) !important;
+  line-height: var(--lh-normal);
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+.responsive-footer-contact {
+  font-size: var(--fluid-xs) !important;
+  line-height: var(--lh-tight);
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+.responsive-footer-logo {
+  max-height: clamp(30px, 8vw, 40px) !important;
+  max-width: clamp(30px, 8vw, 40px) !important;
+}
+
+.responsive-footer-icon {
+  width: clamp(36px, 10vw, 40px) !important;
+  height: clamp(36px, 10vw, 40px) !important;
+}
+
+/* Dialog */
+.responsive-dialog-title {
+  font-size: clamp(1.25rem, 4vw, 1.5rem) !important;
+  line-height: var(--lh-tight);
+}
+
+.responsive-dialog-subtitle {
+  font-size: var(--fluid-base) !important;
+  line-height: var(--lh-normal);
+  font-weight: 600;
+}
+
+.responsive-dialog-text {
+  font-size: var(--fluid-base) !important;
+  line-height: var(--lh-relaxed);
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+.responsive-dialog-list {
+  font-size: var(--fluid-sm) !important;
+  line-height: var(--lh-relaxed);
+}
+
+.responsive-alert .responsive-alert-text {
+  font-size: var(--fluid-sm) !important;
+  line-height: var(--lh-normal);
+  word-break: break-word !important;
+  white-space: normal !important;
+}
+
+.responsive-dialog-btn .responsive-btn-text {
+  font-size: var(--fluid-sm) !important;
+  line-height: var(--lh-tight);
+}
+
+/* Image Viewer */
+.responsive-image-viewer-title {
+  font-size: clamp(1rem, 4vw, 1.25rem) !important;
+  line-height: var(--lh-tight);
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.responsive-image-viewer-hint {
+  font-size: var(--fluid-xs) !important;
+  line-height: var(--lh-tight);
+}
+
+.responsive-close-btn {
+  width: clamp(36px, 10vw, 48px) !important;
+  height: clamp(36px, 10vw, 48px) !important;
+}
+
+.responsive-nav-btn {
+  width: clamp(40px, 12vw, 56px) !important;
+  height: clamp(40px, 12vw, 56px) !important;
+}
+
+/* ============ EXISTING STYLES WITH MOBILE ENHANCEMENTS ============ */
 
 /* Hero Section */
 .hero-section {
@@ -1391,19 +1810,18 @@ onMounted(() => {
 }
 
 .hero-card {
-  background: #3f83c7 !important; /* Direct color value with !important */
+  background: #3f83c7 !important;
   backdrop-filter: blur(10px);
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important; /* Lighter border for contrast */
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
   box-shadow: 
     0 20px 60px rgba(63, 131, 199, 0.25) !important,
-    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important; /* Inner glow */
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   position: relative;
   z-index: 1;
-  color: white !important; /* Ensure text is white */
+  color: white !important;
 }
 
-/* Update text colors in hero card to be visible on blue background */
 .hero-card .gradient-text {
   background: linear-gradient(to right, #ffffff, #e6f2ff) !important;
   -webkit-background-clip: text !important;
@@ -1441,7 +1859,6 @@ onMounted(() => {
 .download-btn {
   min-width: 280px;
   padding: 20px 40px !important;
-  font-size: 1.1rem !important;
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0.5px;
@@ -1462,10 +1879,6 @@ onMounted(() => {
 
 .guide-section {
   background-color: var(--background-lighter);
-}
-
-.testimonials-section {
-  background-color: var(--background-gray);
 }
 
 .download-section {
@@ -1597,15 +2010,6 @@ onMounted(() => {
   border: 1px solid rgba(63, 131, 199, 0.1);
 }
 
-.step-title {
-  color: var(--primary-main);
-}
-
-.instruction {
-  color: #4a5568;
-  line-height: 1.6;
-}
-
 /* Image Containers */
 .image-container {
   position: relative;
@@ -1663,7 +2067,6 @@ onMounted(() => {
 
 .image-overlay.small {
   padding: 8px;
-  font-size: 0.75rem;
 }
 
 .image-placeholder {
@@ -1796,7 +2199,7 @@ onMounted(() => {
   max-width: 800px;
 }
 
-/* Responsive Design */
+/* Responsive Design - Enhanced for Mobile */
 @media (max-width: 960px) {
   .download-btn {
     min-width: 240px;
@@ -1805,10 +2208,6 @@ onMounted(() => {
 
   .hero-section {
     min-height: 80vh;
-  }
-
-  .text-h3 {
-    font-size: 2rem !important;
   }
 
   .section-title::after {
@@ -1857,32 +2256,56 @@ onMounted(() => {
   .image-container {
     min-height: 250px;
   }
+  
+  /* Improved mobile text spacing */
+  .responsive-section-title {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .responsive-hero-subtitle {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .responsive-guide-title {
+    margin-bottom: 1rem !important;
+  }
+  
+  .step-content {
+    padding: 16px !important;
+  }
+  
+  /* Feature list mobile optimization */
+  .responsive-feature-item {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .feature-icon {
+    margin-right: 8px !important;
+    font-size: 20px !important;
+  }
 }
 
 @media (max-width: 600px) {
   .download-btn {
     min-width: 100%;
-    padding: 16px 32px !important;
+    padding: 16px 24px !important;
     font-size: 1rem !important;
   }
 
   .hero-card {
-    padding: 2rem !important;
-    margin: 1rem;
-  }
-
-  .text-h3 {
-    font-size: 1.75rem !important;
+    padding: 1.5rem !important;
+    margin: 0.75rem;
   }
 
   section {
-    padding-top: 3rem !important;
-    padding-bottom: 3rem !important;
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
   }
 
   .info-card,
   .guide-card {
-    padding: 1.5rem !important;
+    padding: 1.25rem !important;
   }
 
   .section-title::after {
@@ -1932,6 +2355,132 @@ onMounted(() => {
 
   .image-container {
     max-height: 300px !important;
+  }
+  
+  /* Extra small mobile optimizations */
+  .responsive-h1 {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .responsive-hero-subtitle {
+    margin-bottom: 1.25rem !important;
+  }
+  
+  .responsive-download-title {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .responsive-download-subtitle {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .responsive-guide-btns {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .responsive-guide-btns .v-btn {
+    width: 100%;
+  }
+  
+  .step-content {
+    padding: 0.75rem !important;
+  }
+  
+  .image-container {
+    min-height: 180px;
+  }
+  
+  /* Features mobile optimization */
+  .responsive-feature-text {
+    font-size: clamp(0.875rem, 3vw, 1rem) !important;
+    line-height: 1.5 !important;
+  }
+  
+  .feature-icon {
+    margin-right: 6px !important;
+    font-size: 18px !important;
+  }
+  
+  .app-info-table {
+    font-size: 0.875rem !important;
+  }
+  
+  .responsive-table-header,
+  .responsive-table-data {
+    padding: 8px 4px !important;
+  }
+}
+
+/* Extra small screens (below 400px) */
+@media (max-width: 400px) {
+  .hero-card h1 {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .hero-card p {
+    margin-bottom: 1rem !important;
+  }
+
+  .v-btn.size-x-large {
+    padding: 14px 20px !important;
+  }
+
+  .navigation-card h4 {
+    margin-bottom: 0.25rem !important;
+  }
+
+  .step-title {
+    margin-bottom: 0.75rem !important;
+  }
+
+  .image-viewer-toolbar .v-toolbar-title {
+    max-width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .navigation-card .image-container {
+    height: 150px;
+  }
+
+  .image-container {
+    min-height: 150px;
+  }
+  
+  .responsive-feature-title,
+  .responsive-guide-title {
+    font-size: clamp(1.25rem, 5vw, 1.5rem) !important;
+  }
+  
+  .responsive-section-title {
+    font-size: clamp(1.5rem, 6vw, 2rem) !important;
+  }
+  
+  .responsive-h1 {
+    font-size: clamp(1.75rem, 8vw, 2.5rem) !important;
+  }
+  
+  /* Features extra small screen optimization */
+  .responsive-feature-text {
+    font-size: clamp(0.75rem, 2.5vw, 0.875rem) !important;
+    line-height: 1.4 !important;
+  }
+  
+  .feature-icon {
+    font-size: 16px !important;
+    margin-right: 4px !important;
+  }
+  
+  .app-info-table {
+    font-size: 0.75rem !important;
+  }
+  
+  .responsive-table-header,
+  .responsive-table-data {
+    padding: 6px 3px !important;
+    font-size: 0.75rem !important;
   }
 }
 
@@ -2022,43 +2571,7 @@ h6 {
   letter-spacing: 0.3px;
 }
 
-/* Mobile optimization */
-@media (max-width: 400px) {
-  .hero-card h1 {
-    font-size: 2rem !important;
-  }
-
-  .hero-card p {
-    font-size: 1rem !important;
-  }
-
-  .v-btn.size-x-large {
-    padding: 14px 28px !important;
-    font-size: 0.95rem !important;
-  }
-
-  .navigation-card h4 {
-    font-size: 1rem !important;
-  }
-
-  .step-title {
-    font-size: 1.125rem !important;
-  }
-
-  .image-viewer-toolbar .v-toolbar-title {
-    font-size: 0.875rem !important;
-  }
-
-  .navigation-card .image-container {
-    height: 150px;
-  }
-
-  .image-container {
-    min-height: 150px;
-  }
-}
-
-/* Touch device optimizations */
+/* Mobile optimization for touch devices */
 @media (hover: none) and (pointer: coarse) {
   .image-container:hover {
     transform: none;
@@ -2090,6 +2603,48 @@ h6 {
   .download-btn,
   .download-action-btn {
     padding: 16px 24px !important;
+  }
+  
+  /* Increase touch target for chips */
+  .responsive-chip {
+    min-height: 32px;
+    padding: 0 12px;
+  }
+  
+  /* Better touch targets for feature items */
+  .responsive-feature-item {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    min-height: 56px;
+  }
+}
+
+/* Print styles for better readability */
+@media print {
+  .hero-section {
+    min-height: auto;
+  }
+  
+  .download-btn,
+  .responsive-guide-btns,
+  .image-viewer-toolbar,
+  .v-footer {
+    display: none !important;
+  }
+  
+  .responsive-h1,
+  .responsive-section-title,
+  .responsive-guide-title {
+    color: #000 !important;
+    background: none !important;
+    -webkit-text-fill-color: #000 !important;
+  }
+  
+  .responsive-feature-text,
+  .responsive-instruction,
+  .responsive-nav-description {
+    font-size: 12pt !important;
+    line-height: 1.6 !important;
   }
 }
 </style>
