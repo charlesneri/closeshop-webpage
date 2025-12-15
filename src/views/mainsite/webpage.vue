@@ -39,6 +39,7 @@ const colorPalette = {
 const logoUrl = ref('/logo.png')
 const heroImage = ref('https://picsum.photos/800/400?random=2&blur=1')
 const apkUrl = ref('/closeshop.apk')
+const isMobileDevice = ref(false)
 
 // Image data for better organization
 const shopGuideImages = ref([
@@ -123,11 +124,8 @@ const appInfo = ref({
   Developer: 'Charles Q. Neri, Queen Zayvy P. Israel, Nel O. Ochate',
   Size: '12.7 MB',
   Requires: 'Android 8.0 or higher',
- 
   'Last Updated': 'December 2025'
 })
-
-
 
 const footerLinks = ref([
   { text: 'GitHub', icon: 'mdi-github', href: 'https://github.com' },
@@ -210,42 +208,65 @@ const downloadAPK = async () => {
   downloadError.value = ''
 
   try {
-    const response = await fetch(apkUrl.value)
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    const blob = await response.blob()
-    const url = window.URL.createObjectURL(blob)
-    const link = document.createElement('a')
-
-    link.href = url
-    link.download = 'closeshop.apk'
-    document.body.appendChild(link)
-    link.click()
-
-    window.URL.revokeObjectURL(url)
-    document.body.removeChild(link)
-
-    downloadSuccess.value = true
-    downloadDialog.value = true
-
-    setTimeout(() => {
-      downloadDialog.value = false
-    }, 5000)
-  } catch (error) {
-    console.error('Download error:', error)
-    downloadError.value = 'Download failed. Please try again.'
-    downloadDialog.value = true
-
+    // Create a direct link element for mobile compatibility
     const link = document.createElement('a')
     link.href = apkUrl.value
     link.download = 'closeshop.apk'
-    link.target = '_blank'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    
+    // For mobile devices, we need to handle it differently
+    if (isMobileDevice.value) {
+      // Mobile device handling
+      link.target = '_blank'
+      link.rel = 'noopener noreferrer'
+      
+      // Create a click event and trigger it
+      const clickEvent = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: false
+      })
+      link.dispatchEvent(clickEvent)
+      
+      // Show instructions for mobile users
+      downloadDialog.value = true
+      downloadSuccess.value = true
+      
+      // For iOS devices, show special instructions
+      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        downloadError.value = 'iOS devices cannot install APK files directly. Please use an Android device.'
+      }
+    } else {
+      // Desktop handling with blob download
+      const response = await fetch(apkUrl.value)
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      link.href = url
+      
+      document.body.appendChild(link)
+      link.click()
+
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(link)
+
+      downloadSuccess.value = true
+      downloadDialog.value = true
+    }
+
+    setTimeout(() => {
+      downloadDialog.value = false
+    }, 8000) // Increased timeout for mobile users to read instructions
+  } catch (error) {
+    console.error('Download error:', error)
+    downloadError.value = 'Download failed. Please try again or use the direct link.'
+    downloadDialog.value = true
+    
+    // Fallback: open in new tab
+    window.open(apkUrl.value, '_blank')
   } finally {
     isLoading.value = false
   }
@@ -255,6 +276,9 @@ const downloadAPK = async () => {
 onMounted(() => {
   console.log('Closeshop App mounted successfully')
   document.addEventListener('keydown', handleKeydown)
+  
+  // Detect mobile device
+  isMobileDevice.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 })
 </script>
 
@@ -353,7 +377,7 @@ onMounted(() => {
                     ></v-progress-circular>
                   </template>
                   <v-icon left>mdi-download</v-icon>
-                  {{ isLoading ? 'Downloading...' : 'Get Closeshop Now' }}
+                  {{ isLoading ? 'Downloading...' : isMobileDevice ? 'Get on Android' : 'Get Closeshop Now' }}
                 </v-btn>
 
                 <div class="mt-8">
@@ -735,7 +759,7 @@ onMounted(() => {
                     ></v-progress-circular>
                   </template>
                   <v-icon left>mdi-download</v-icon>
-                  {{ isLoading ? 'Downloading...' : 'Download Free APK' }}
+                  {{ isLoading ? 'Downloading...' : isMobileDevice ? 'Download for Android' : 'Download Free APK' }}
                 </v-btn>
 
                 <div class="mt-8">
@@ -814,13 +838,45 @@ onMounted(() => {
           <v-icon :color="downloadSuccess ? colorPalette.success : colorPalette.primary.main" left>
             {{ downloadSuccess ? 'mdi-check-circle' : 'mdi-download' }}
           </v-icon>
-          {{ downloadSuccess ? 'Download Complete!' : 'Download Started' }}
+          {{ downloadSuccess ? 'Download Started!' : 'Download Instructions' }}
         </v-card-title>
         
         <v-card-text>
+          <div v-if="isMobileDevice && /Android/i.test(navigator.userAgent)" class="mb-4">
+            <v-alert type="info" density="compact" class="mb-4">
+              <v-icon left>mdi-android</v-icon>
+              Android Device Detected
+            </v-alert>
+            
+            <p class="text-body-1 mb-2">
+              <strong>For Android devices:</strong>
+            </p>
+            <ol class="text-body-2 pl-4 mb-4">
+              <li>Tap "OK" or "Download" in your browser</li>
+              <li>The APK will download to your device</li>
+              <li>Open your file manager and locate the APK</li>
+              <li>Tap the APK file to install</li>
+            </ol>
+          </div>
+          
+          <div v-else-if="isMobileDevice && /iPhone|iPad|iPod/i.test(navigator.userAgent)" class="mb-4">
+            <v-alert type="warning" density="compact" class="mb-4">
+              <v-icon left>mdi-apple</v-icon>
+              iOS Device Detected
+            </v-alert>
+            
+            <p class="text-body-1 mb-2">
+              <strong>Important:</strong>
+            </p>
+            <p class="text-body-2 mb-4">
+              APK files can only be installed on Android devices. 
+              Please use an Android device to download and install Closeshop.
+            </p>
+          </div>
+          
           <p v-if="downloadSuccess" class="text-body-1">
             <v-icon :color="colorPalette.success" left>mdi-check</v-icon>
-            Closeshop APK has been downloaded successfully!
+            {{ isMobileDevice ? 'Opening download...' : 'Download started successfully!' }}
           </p>
           <p v-else class="text-body-1">
             <v-icon :color="colorPalette.primary.main" left>mdi-download</v-icon>
@@ -831,8 +887,8 @@ onMounted(() => {
             <strong>Installation Steps:</strong>
           </p>
           <ol class="text-body-2 pl-4">
-            <li>Locate the downloaded APK file</li>
-            <li>Allow installation from unknown sources in Android settings</li>
+            <li v-if="!downloadSuccess">Allow installation from unknown sources in Android settings</li>
+            <li>Open the downloaded APK file</li>
             <li>Follow the installation prompts</li>
             <li>Open Closeshop and create your account</li>
           </ol>
@@ -842,6 +898,22 @@ onMounted(() => {
               <v-icon left>mdi-alert-circle</v-icon>
               {{ downloadError }}
             </v-alert>
+          </div>
+          
+          <!-- Direct download link as backup -->
+          <div class="mt-6">
+            <p class="text-body-2 mb-2">If download doesn't start:</p>
+            <v-btn 
+              :href="apkUrl" 
+              target="_blank" 
+              :color="colorPalette.primary.main"
+              variant="outlined"
+              block
+              @click="downloadDialog = false"
+            >
+              <v-icon left>mdi-link</v-icon>
+              Open Direct Link
+            </v-btn>
           </div>
         </v-card-text>
         
@@ -1585,6 +1657,21 @@ h1, h2, h3, h4, h5, h6 {
   
   .v-btn:hover {
     transform: none;
+  }
+  
+  /* Better touch targets for mobile */
+  .v-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .nav-btn {
+    width: 50px !important;
+    height: 50px !important;
+  }
+  
+  .download-btn, .download-action-btn {
+    padding: 16px 24px !important;
   }
 }
 </style>
