@@ -49,21 +49,24 @@ const accountCreationImages = ref([
     src: '/CreateAccGuide/step01.png',
     alt: 'Step 1 - Register page with form fields',
     title: 'Step 1: Go to Register Page',
-    description: 'Open the Closeshop app and navigate to the Register page. Fill in all the required details including your name, email, and password.',
+    description:
+      'Open the Closeshop app and navigate to the Register page. Fill in all the required details including your name, email, and password.',
   },
   {
     id: 2,
     src: '/CreateAccGuide/step002.png',
     alt: 'Step 2 - Email verification',
     title: 'Step 2: Verify Your Email',
-    description: 'Check your email inbox for a verification link from Closeshop. Click the link to verify your email address and activate your account.',
+    description:
+      'Check your email inbox for a verification link from Closeshop. Click the link to verify your email address and activate your account.',
   },
   {
     id: 3,
     src: '/CreateAccGuide/step3.jpg',
     alt: 'Step 3 - Login page',
     title: 'Step 3: Login to Your Account',
-    description: 'Return to the Closeshop app and go to the Login page. Enter your verified email and password to access your new account.',
+    description:
+      'Return to the Closeshop app and go to the Login page. Enter your verified email and password to access your new account.',
   },
 ])
 
@@ -74,21 +77,24 @@ const shopGuideImages = ref([
     src: '/CreateShopGuide/step1.jpg',
     alt: 'Step 1 - Profile Page with Create Shop button',
     title: 'Step 1: Access Create Shop',
-    description: 'Go to your profile page and click the "Create Shop" button. Note: If you already have a shop, this button will be replaced with "View Shop".',
+    description:
+      'Go to your profile page and click the "Create Shop" button. Note: If you already have a shop, this button will be replaced with "View Shop".',
   },
   {
     id: 2,
     src: '/CreateShopGuide/step2.jpg',
     alt: 'Step 2 - Shop Details Form',
     title: 'Step 2: Fill Shop Details',
-    description: 'Fill in all the details of your shop and click the "Save Shop" button. Note: For testing purposes, you can use sample images for the Valid ID upload.',
+    description:
+      'Fill in all the details of your shop and click the "Save Shop" button. Note: For testing purposes, you can use sample images for the Valid ID upload.',
   },
   {
     id: 3,
     src: '/CreateShopGuide/step3.jpg',
     alt: 'Step 3 - Shop Status Page',
     title: 'Step 3: Wait for Approval',
-    description: 'Wait for the status of your shop creation. An admin will review your details and either approve or reject your shop application.',
+    description:
+      'Wait for the status of your shop creation. An admin will review your details and either approve or reject your shop application.',
   },
 ])
 
@@ -99,7 +105,8 @@ const navigationImages = ref([
     src: '/NavigatePage/homepage.jpg',
     alt: 'Home Page showing shops and products',
     title: 'Home Page',
-    description: 'Displays shops based on your current location (city-based) and all available products.',
+    description:
+      'Displays shops based on your current location (city-based) and all available products.',
   },
   {
     id: 'cart',
@@ -113,7 +120,8 @@ const navigationImages = ref([
     src: '/NavigatePage/mappage.jpg',
     alt: 'Map Page showing shop locations',
     title: 'Map Page',
-    description: 'Displays shops on the map with markers. Click markers to view routes between your location and shops, and directly access shop items.',
+    description:
+      'Displays shops on the map with markers. Click markers to view routes between your location and shops, and directly access shop items.',
   },
   {
     id: 'messages',
@@ -127,7 +135,8 @@ const navigationImages = ref([
     src: '/NavigatePage/profpage.jpg',
     alt: 'Profile Page with user information',
     title: 'Profile Page',
-    description: 'Your personal profile page. If you have created a shop, this page will include a button to access your shop dashboard.',
+    description:
+      'Your personal profile page. If you have created a shop, this page will include a button to access your shop dashboard.',
   },
 ])
 
@@ -181,7 +190,7 @@ const closeImageViewer = () => {
 const navigateImages = (direction, imageArray) => {
   if (imageViewer.value.open) {
     let currentImageIndex = imageArray.findIndex((img) => img.src === imageViewer.value.src)
-    
+
     if (currentImageIndex !== -1) {
       if (direction === 'next') {
         currentImageIndex = (currentImageIndex + 1) % imageArray.length
@@ -207,18 +216,18 @@ const handleKeydown = (event) => {
       closeImageViewer()
     } else if (event.key === 'ArrowRight') {
       // Determine which array to navigate
-      if (accountCreationImages.value.find(img => img.src === imageViewer.value.src)) {
+      if (accountCreationImages.value.find((img) => img.src === imageViewer.value.src)) {
         navigateImages('next', accountCreationImages.value)
-      } else if (shopGuideImages.value.find(img => img.src === imageViewer.value.src)) {
+      } else if (shopGuideImages.value.find((img) => img.src === imageViewer.value.src)) {
         navigateImages('next', shopGuideImages.value)
       } else {
         navigateImages('next', navigationImages.value)
       }
     } else if (event.key === 'ArrowLeft') {
       // Determine which array to navigate
-      if (accountCreationImages.value.find(img => img.src === imageViewer.value.src)) {
+      if (accountCreationImages.value.find((img) => img.src === imageViewer.value.src)) {
         navigateImages('prev', accountCreationImages.value)
-      } else if (shopGuideImages.value.find(img => img.src === imageViewer.value.src)) {
+      } else if (shopGuideImages.value.find((img) => img.src === imageViewer.value.src)) {
         navigateImages('prev', shopGuideImages.value)
       } else {
         navigateImages('prev', navigationImages.value)
@@ -356,7 +365,9 @@ onMounted(() => {
         class="ml-2 mr-4"
         contain
       ></v-img>
-      <v-toolbar-title class="font-weight-bold text-white responsive-toolbar-title">Closeshop</v-toolbar-title>
+      <v-toolbar-title class="font-weight-bold text-white responsive-toolbar-title"
+        >Closeshop</v-toolbar-title
+      >
 
       <v-spacer></v-spacer>
 
@@ -490,7 +501,8 @@ onMounted(() => {
             <v-col cols="12" class="text-center mb-12">
               <h2 class="responsive-section-title">About Closeshop</h2>
               <p class="responsive-section-subtitle">
-                A revolutionary shopping platform developed by Caraga State University students
+                A Capstone Development Project of Bachelor of Science in Information Systems
+                students in Caraga State University
               </p>
               <v-divider width="100" class="mx-auto mt-6 primary-divider"></v-divider>
             </v-col>
@@ -594,16 +606,24 @@ onMounted(() => {
                     <tbody>
                       <!-- Developer -->
                       <tr class="info-row responsive-info-row">
-                        <td class="font-weight-bold responsive-table-header py-3" style="color: #3f83c7">
+                        <td
+                          class="font-weight-bold responsive-table-header py-3"
+                          style="color: #3f83c7"
+                        >
                           Developer
                         </td>
                         <td class="responsive-table-data py-3">
-                          <span class="app-info-text">Charles Q. Neri, Queen Zayvy P. Israel, Nel O. Ochate</span>
+                          <span class="app-info-text"
+                            >Charles Q. Neri, Queen Zayvy P. Israel, Nel O. Ochate</span
+                          >
                         </td>
                       </tr>
                       <!-- Size -->
                       <tr class="info-row responsive-info-row">
-                        <td class="font-weight-bold responsive-table-header py-3" style="color: #3f83c7">
+                        <td
+                          class="font-weight-bold responsive-table-header py-3"
+                          style="color: #3f83c7"
+                        >
                           Size
                         </td>
                         <td class="responsive-table-data py-3">
@@ -612,7 +632,10 @@ onMounted(() => {
                       </tr>
                       <!-- Requires -->
                       <tr class="info-row responsive-info-row">
-                        <td class="font-weight-bold responsive-table-header py-3" style="color: #3f83c7">
+                        <td
+                          class="font-weight-bold responsive-table-header py-3"
+                          style="color: #3f83c7"
+                        >
                           Requires
                         </td>
                         <td class="responsive-table-data py-3">
@@ -621,7 +644,10 @@ onMounted(() => {
                       </tr>
                       <!-- Last Updated -->
                       <tr class="info-row responsive-info-row">
-                        <td class="font-weight-bold responsive-table-header py-3" style="color: #3f83c7">
+                        <td
+                          class="font-weight-bold responsive-table-header py-3"
+                          style="color: #3f83c7"
+                        >
                           Last Updated
                         </td>
                         <td class="responsive-table-data py-3">
@@ -683,7 +709,11 @@ onMounted(() => {
 
                     <v-divider></v-divider>
 
-                    <v-stepper-step step="3" :color="colorPalette.primary.main" class="responsive-stepper-step">
+                    <v-stepper-step
+                      step="3"
+                      :color="colorPalette.primary.main"
+                      class="responsive-stepper-step"
+                    >
                       <span class="responsive-step-text">Login to Account</span>
                     </v-stepper-step>
                   </v-stepper-header>
@@ -771,7 +801,12 @@ onMounted(() => {
                           {{ accountCreationImages[1].description }}
                         </p>
                         <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
-                          <v-btn variant="outlined" @click="prevAccountStep" size="large" class="responsive-guide-btn">
+                          <v-btn
+                            variant="outlined"
+                            @click="prevAccountStep"
+                            size="large"
+                            class="responsive-guide-btn"
+                          >
                             <v-icon left>mdi-arrow-left</v-icon>
                             <span class="responsive-btn-text">Previous</span>
                           </v-btn>
@@ -823,7 +858,12 @@ onMounted(() => {
                           {{ accountCreationImages[2].description }}
                         </p>
                         <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
-                          <v-btn variant="outlined" @click="prevAccountStep" size="large" class="responsive-guide-btn">
+                          <v-btn
+                            variant="outlined"
+                            @click="prevAccountStep"
+                            size="large"
+                            class="responsive-guide-btn"
+                          >
                             <v-icon left>mdi-arrow-left</v-icon>
                             <span class="responsive-btn-text">Previous</span>
                           </v-btn>
@@ -879,7 +919,11 @@ onMounted(() => {
 
                     <v-divider></v-divider>
 
-                    <v-stepper-step step="3" :color="colorPalette.primary.main" class="responsive-stepper-step">
+                    <v-stepper-step
+                      step="3"
+                      :color="colorPalette.primary.main"
+                      class="responsive-stepper-step"
+                    >
                       <span class="responsive-step-text">Wait for Approval</span>
                     </v-stepper-step>
                   </v-stepper-header>
@@ -967,7 +1011,12 @@ onMounted(() => {
                           {{ shopGuideImages[1].description }}
                         </p>
                         <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
-                          <v-btn variant="outlined" @click="prevShopStep" size="large" class="responsive-guide-btn">
+                          <v-btn
+                            variant="outlined"
+                            @click="prevShopStep"
+                            size="large"
+                            class="responsive-guide-btn"
+                          >
                             <v-icon left>mdi-arrow-left</v-icon>
                             <span class="responsive-btn-text">Previous</span>
                           </v-btn>
@@ -1019,7 +1068,12 @@ onMounted(() => {
                           {{ shopGuideImages[2].description }}
                         </p>
                         <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
-                          <v-btn variant="outlined" @click="prevShopStep" size="large" class="responsive-guide-btn">
+                          <v-btn
+                            variant="outlined"
+                            @click="prevShopStep"
+                            size="large"
+                            class="responsive-guide-btn"
+                          >
                             <v-icon left>mdi-arrow-left</v-icon>
                             <span class="responsive-btn-text">Previous</span>
                           </v-btn>
@@ -1148,7 +1202,9 @@ onMounted(() => {
                 </v-btn>
 
                 <div class="mt-8">
-                  <p class="responsive-download-info text-white">Version 1.0.0 • 25 MB • Android 8.0+</p>
+                  <p class="responsive-download-info text-white">
+                    Version 1.0.0 • 25 MB • Android 8.0+
+                  </p>
                   <div>
                     <v-chip
                       class="ma-1 responsive-chip"
@@ -1223,7 +1279,9 @@ onMounted(() => {
                 <v-icon>{{ link.icon }}</v-icon>
               </v-btn>
             </div>
-            <p class="responsive-footer-contact text-white">closeshop@example.com • +63 123 456 7890</p>
+            <p class="responsive-footer-contact text-white">
+              closeshop@example.com • +63 123 456 7890
+            </p>
           </v-col>
         </v-row>
       </v-container>
@@ -1323,7 +1381,12 @@ onMounted(() => {
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn :color="colorPalette.primary.main" @click="downloadDialog = false" variant="flat" class="responsive-dialog-btn">
+          <v-btn
+            :color="colorPalette.primary.main"
+            @click="downloadDialog = false"
+            variant="flat"
+            class="responsive-dialog-btn"
+          >
             <span class="responsive-btn-text">Got it</span>
           </v-btn>
         </v-card-actions>
@@ -1339,7 +1402,9 @@ onMounted(() => {
     >
       <v-card color="black" class="image-viewer-card">
         <v-toolbar color="transparent" density="compact" class="image-viewer-toolbar">
-          <v-toolbar-title class="text-white responsive-image-viewer-title">{{ imageViewer.title }}</v-toolbar-title>
+          <v-toolbar-title class="text-white responsive-image-viewer-title">{{
+            imageViewer.title
+          }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon @click="closeImageViewer" color="white" class="responsive-close-btn">
             <v-icon>mdi-close</v-icon>
@@ -1351,7 +1416,7 @@ onMounted(() => {
           <v-btn
             icon
             @click="navigateImages('prev', accountCreationImages)"
-            v-if="accountCreationImages.find(img => img.src === imageViewer.src)"
+            v-if="accountCreationImages.find((img) => img.src === imageViewer.src)"
             class="nav-btn prev-btn responsive-nav-btn"
             color="white"
             size="x-large"
@@ -1361,7 +1426,7 @@ onMounted(() => {
           <v-btn
             icon
             @click="navigateImages('prev', shopGuideImages)"
-            v-else-if="shopGuideImages.find(img => img.src === imageViewer.src)"
+            v-else-if="shopGuideImages.find((img) => img.src === imageViewer.src)"
             class="nav-btn prev-btn responsive-nav-btn"
             color="white"
             size="x-large"
@@ -1400,7 +1465,7 @@ onMounted(() => {
           <v-btn
             icon
             @click="navigateImages('next', accountCreationImages)"
-            v-if="accountCreationImages.find(img => img.src === imageViewer.src)"
+            v-if="accountCreationImages.find((img) => img.src === imageViewer.src)"
             class="nav-btn next-btn responsive-nav-btn"
             color="white"
             size="x-large"
@@ -1410,7 +1475,7 @@ onMounted(() => {
           <v-btn
             icon
             @click="navigateImages('next', shopGuideImages)"
-            v-else-if="shopGuideImages.find(img => img.src === imageViewer.src)"
+            v-else-if="shopGuideImages.find((img) => img.src === imageViewer.src)"
             class="nav-btn next-btn responsive-nav-btn"
             color="white"
             size="x-large"
@@ -1447,7 +1512,7 @@ onMounted(() => {
   --primary-light: #6ba1d4;
   --primary-dark: #2c5c8d;
   --primary-gradient: linear-gradient(135deg, #3f83c7 0%, #5a95d1 100%);
-  
+
   /* Fluid font size variables */
   --fluid-xs: clamp(0.75rem, 2vw, 0.875rem);
   --fluid-sm: clamp(0.875rem, 2.5vw, 1rem);
@@ -1457,7 +1522,7 @@ onMounted(() => {
   --fluid-2xl: clamp(1.5rem, 5vw, 2rem);
   --fluid-3xl: clamp(2rem, 6vw, 2.5rem);
   --fluid-4xl: clamp(2.5rem, 7vw, 3rem);
-  
+
   /* Line heights */
   --lh-tight: 1.2;
   --lh-normal: 1.4;
@@ -1814,7 +1879,7 @@ onMounted(() => {
   backdrop-filter: blur(10px);
   border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 
+  box-shadow:
     0 20px 60px rgba(63, 131, 199, 0.25) !important,
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   position: relative;
@@ -2256,30 +2321,30 @@ onMounted(() => {
   .image-container {
     min-height: 250px;
   }
-  
+
   /* Improved mobile text spacing */
   .responsive-section-title {
     margin-bottom: 0.75rem !important;
   }
-  
+
   .responsive-hero-subtitle {
     margin-bottom: 1.5rem !important;
   }
-  
+
   .responsive-guide-title {
     margin-bottom: 1rem !important;
   }
-  
+
   .step-content {
     padding: 16px !important;
   }
-  
+
   /* Feature list mobile optimization */
   .responsive-feature-item {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
-  
+
   .feature-icon {
     margin-right: 8px !important;
     font-size: 20px !important;
@@ -2356,56 +2421,56 @@ onMounted(() => {
   .image-container {
     max-height: 300px !important;
   }
-  
+
   /* Extra small mobile optimizations */
   .responsive-h1 {
     margin-bottom: 0.75rem !important;
   }
-  
+
   .responsive-hero-subtitle {
     margin-bottom: 1.25rem !important;
   }
-  
+
   .responsive-download-title {
     margin-bottom: 0.75rem !important;
   }
-  
+
   .responsive-download-subtitle {
     margin-bottom: 1.5rem !important;
   }
-  
+
   .responsive-guide-btns {
     flex-direction: column;
     gap: 0.75rem;
   }
-  
+
   .responsive-guide-btns .v-btn {
     width: 100%;
   }
-  
+
   .step-content {
     padding: 0.75rem !important;
   }
-  
+
   .image-container {
     min-height: 180px;
   }
-  
+
   /* Features mobile optimization */
   .responsive-feature-text {
     font-size: clamp(0.875rem, 3vw, 1rem) !important;
     line-height: 1.5 !important;
   }
-  
+
   .feature-icon {
     margin-right: 6px !important;
     font-size: 18px !important;
   }
-  
+
   .app-info-table {
     font-size: 0.875rem !important;
   }
-  
+
   .responsive-table-header,
   .responsive-table-data {
     padding: 8px 4px !important;
@@ -2448,35 +2513,35 @@ onMounted(() => {
   .image-container {
     min-height: 150px;
   }
-  
+
   .responsive-feature-title,
   .responsive-guide-title {
     font-size: clamp(1.25rem, 5vw, 1.5rem) !important;
   }
-  
+
   .responsive-section-title {
     font-size: clamp(1.5rem, 6vw, 2rem) !important;
   }
-  
+
   .responsive-h1 {
     font-size: clamp(1.75rem, 8vw, 2.5rem) !important;
   }
-  
+
   /* Features extra small screen optimization */
   .responsive-feature-text {
     font-size: clamp(0.75rem, 2.5vw, 0.875rem) !important;
     line-height: 1.4 !important;
   }
-  
+
   .feature-icon {
     font-size: 16px !important;
     margin-right: 4px !important;
   }
-  
+
   .app-info-table {
     font-size: 0.75rem !important;
   }
-  
+
   .responsive-table-header,
   .responsive-table-data {
     padding: 6px 3px !important;
@@ -2604,13 +2669,13 @@ h6 {
   .download-action-btn {
     padding: 16px 24px !important;
   }
-  
+
   /* Increase touch target for chips */
   .responsive-chip {
     min-height: 32px;
     padding: 0 12px;
   }
-  
+
   /* Better touch targets for feature items */
   .responsive-feature-item {
     padding-top: 12px !important;
@@ -2624,14 +2689,14 @@ h6 {
   .hero-section {
     min-height: auto;
   }
-  
+
   .download-btn,
   .responsive-guide-btns,
   .image-viewer-toolbar,
   .v-footer {
     display: none !important;
   }
-  
+
   .responsive-h1,
   .responsive-section-title,
   .responsive-guide-title {
@@ -2639,7 +2704,7 @@ h6 {
     background: none !important;
     -webkit-text-fill-color: #000 !important;
   }
-  
+
   .responsive-feature-text,
   .responsive-instruction,
   .responsive-nav-description {
