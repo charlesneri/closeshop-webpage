@@ -141,10 +141,12 @@ const navigationImages = ref([
 ])
 
 const navItems = [
-  { title: 'Home', value: 'home', icon: 'mdi-home' },
-  { title: 'About', value: 'about', icon: 'mdi-information' },
-  { title: 'Guide', value: 'guide', icon: 'mdi-book-open' },
-  { title: 'Download', value: 'download-section', icon: 'mdi-download' },
+  { title: 'HOME', value: 'home', icon: 'mdi-home' },
+  { title: 'ABOUT', value: 'about', icon: 'mdi-information' },
+  { title: 'GUIDE', value: 'guide', icon: 'mdi-book-open' },
+  { title: 'DOWNLOAD', value: 'download-section', icon: 'mdi-download' },
+  { title: 'RIDER PORTAL', value: 'rider-application', icon: 'mdi-motorbike' },
+  { title: 'CONTACT US', value: 'help', icon: 'mdi-headset' },
 ]
 
 const appInfo = ref({
@@ -340,51 +342,108 @@ const downloadAPK = async () => {
   }
 }
 
-// Initialize on mount
+// Add scroll effect to navbar
+const handleScroll = () => {
+  const navbar = document.querySelector('.modern-navbar')
+  if (navbar) {
+    if (window.scrollY > 50) {
+      navbar.classList.add('navbar-scrolled')
+    } else {
+      navbar.classList.remove('navbar-scrolled')
+    }
+  }
+}
+
+// Update active nav item based on scroll position (optional)
+const updateActiveNav = () => {
+  const sections = ['home', 'about', 'guide', 'download-section', 'rider-application', 'help']
+  const scrollPosition = window.scrollY + 100
+  
+  for (const section of sections) {
+    const element = document.getElementById(section)
+    if (element) {
+      const offsetTop = element.offsetTop
+      const offsetBottom = offsetTop + element.offsetHeight
+      
+      if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+        document.querySelectorAll('.desktop-nav-btn').forEach(btn => {
+          btn.classList.remove('active')
+          if (btn.getAttribute('data-section') === section) {
+            btn.classList.add('active')
+          }
+        })
+        break
+      }
+    }
+  }
+}
+
+// Start live chat (you can integrate with a live chat service)
+const startLiveChat = () => {
+  // Example: Open a chat widget or show a message
+  alert('Live chat feature coming soon! For now, please call or email us.')
+  
+  // You can integrate with services like:
+  // - Crisp.chat
+  // - Intercom
+  // - Tawk.to
+  // - Facebook Messenger
+}
+
 onMounted(() => {
   console.log('Closeshop App mounted successfully')
   document.addEventListener('keydown', handleKeydown)
+  window.addEventListener('scroll', handleScroll)
+  window.addEventListener('scroll', updateActiveNav)
 
   // Detect mobile device
   isMobileDevice.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent,
   )
+  
+  // Set data-section attributes on nav buttons
+  const navButtons = document.querySelectorAll('.desktop-nav-btn')
+  const sections = ['home', 'about', 'guide', 'download-section', 'rider-application', 'help']
+  navButtons.forEach((btn, index) => {
+    if (sections[index]) {
+      btn.setAttribute('data-section', sections[index])
+    }
+  })
 })
 </script>
 
 <template>
   <v-app>
     <!-- Navigation Bar -->
-    <v-app-bar :style="{ background: colorPalette.primary.gradient }" prominent elevated>
-      <v-app-bar-nav-icon @click="drawer = !drawer" color="white"></v-app-bar-nav-icon>
+    <v-app-bar :style="{ background: colorPalette.primary.gradient }" prominent elevated class="modern-navbar">
+      <v-app-bar-nav-icon @click="drawer = !drawer" color="white" class="d-md-none nav-icon"></v-app-bar-nav-icon>
       <v-img
         :src="logoUrl"
         alt="Closeshop Logo"
         max-height="40"
         max-width="40"
-        class="ml-2 mr-4"
+        class="ml-2 mr-2 mr-sm-4 nav-logo"
         contain
       ></v-img>
-      <v-toolbar-title class="font-weight-bold text-white responsive-toolbar-title"
-        >Closeshop</v-toolbar-title
+      <v-toolbar-title class="font-weight-bold text-white responsive-toolbar-title app-title"
+        >CloseShop</v-toolbar-title
       >
 
       <v-spacer></v-spacer>
 
-      <!-- Desktop Navigation -->
-      <div class="d-none d-md-flex align-center">
+      <!-- Desktop Navigation - Compact -->
+      <div class="desktop-nav">
         <v-btn
           v-for="item in navItems"
           :key="item.value"
-          :value="item.value"
           @click="scrollToSection(item.value)"
           variant="text"
           color="white"
-          class="mx-1 responsive-nav-btn"
+          class="desktop-nav-btn"
           rounded
         >
-          <v-icon left size="small">{{ item.icon }}</v-icon>
-          <span class="responsive-btn-text">{{ item.title }}</span>
+          <span class="nav-text">{{ item.title }}</span>
+          <span class="nav-indicator"></span>
         </v-btn>
       </div>
     </v-app-bar>
@@ -408,255 +467,252 @@ onMounted(() => {
 
     <!-- Main Content -->
     <v-main>
-      <!-- Hero Section -->
+      <!-- Hero Section-->
       <section id="home" class="hero-section">
+        <div class="hero-background">
+          <div class="hero-blob-1"></div>
+          <div class="hero-blob-2"></div>
+          <div class="hero-blob-3"></div>
+          <div class="hero-grid"></div>
+        </div>
+
         <v-container fluid class="fill-height pa-0">
           <v-row align="center" justify="center" class="fill-height">
             <v-col cols="12" md="10" lg="8" class="text-center">
-              <v-card class="pa-8 pa-sm-12 hero-card" elevation="0">
-                <v-img
-                  :src="logoUrl"
-                  alt="Closeshop Logo"
-                  max-height="140"
-                  max-width="140"
-                  class="mx-auto mb-8 logo-pulse responsive-logo"
-                  contain
-                ></v-img>
+              <div class="hero-content">
+                <!-- Animated Badge -->
+                <div class="hero-badge">
+                  <span class="badge-pulse"></span>
+                  <span class="badge-text">✨ Available on Android</span>
+                </div>
 
-                <h1 class="responsive-h1 gradient-text">Closeshop</h1>
+                <!-- Logo with Animation -->
+                <div class="logo-wrapper">
+                  <v-img
+                    :src="logoUrl"
+                    alt="Closeshop Logo"
+                    class="hero-logo"
+                    contain
+                  ></v-img>
+                </div>
 
-                <p class="responsive-hero-subtitle">
+                <!-- Main Title -->
+                <h1 class="hero-title">
+                  <span class="title-gradient">Close</span>
+                  <span class="title-gradient-light">Shop</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="hero-subtitle">
                   Connecting businesses with customers seamlessly
                 </p>
 
-                <!-- Download Button -->
-                <v-btn
-                  :style="{ background: colorPalette.primary.gradient }"
-                  size="x-large"
-                  class="mb-4 download-btn responsive-download-btn"
-                  @click="downloadAPK"
-                  rounded
-                  elevation="4"
-                  :loading="isLoading"
-                  :disabled="isLoading"
-                >
-                  <template v-slot:loader>
-                    <v-progress-circular
-                      indeterminate
-                      color="white"
-                      size="24"
-                    ></v-progress-circular>
-                  </template>
-                  <v-icon left>mdi-download</v-icon>
-                  <span class="responsive-btn-label">
-                    {{
-                      isLoading
-                        ? 'Downloading...'
-                        : isMobileDevice
-                          ? 'Get on Android'
-                          : 'Get Closeshop Now'
-                    }}
-                  </span>
-                </v-btn>
-
-                <div class="mt-8">
-                  <v-chip
-                    class="ma-1 responsive-chip"
-                    :color="colorPalette.primary.main"
-                    text-color="white"
-                    size="small"
-                  >
-                    <v-icon left size="small">mdi-shield-check</v-icon>
-                    <span class="responsive-chip-text">Secure</span>
-                  </v-chip>
-                  <v-chip
-                    class="ma-1 responsive-chip"
-                    :color="colorPalette.primary.main"
-                    text-color="white"
-                    size="small"
-                  >
-                    <v-icon left size="small">mdi-account-group</v-icon>
-                    <span class="responsive-chip-text">10K+ Users</span>
-                  </v-chip>
-                  <v-chip
-                    class="ma-1 responsive-chip"
-                    :color="colorPalette.primary.main"
-                    text-color="white"
-                    size="small"
-                  >
-                    <v-icon left size="small">mdi-star</v-icon>
-                    <span class="responsive-chip-text">4.8 Rating</span>
-                  </v-chip>
+                <!-- Feature Highlights -->
+                <div class="feature-highlights">
+                  <div class="highlight-item">
+                    <div class="highlight-icon">
+                      <v-icon size="20">mdi-store</v-icon>
+                    </div>
+                    <span>Local Shops</span>
+                  </div>
+                  <div class="highlight-divider"></div>
+                  <div class="highlight-item">
+                    <div class="highlight-icon">
+                      <v-icon size="20">mdi-map-marker-radius</v-icon>
+                    </div>
+                    <span>Location Based</span>
+                  </div>
+                  <div class="highlight-divider"></div>
+                  <div class="highlight-item">
+                    <div class="highlight-icon">
+                      <v-icon size="20">mdi-currency-php</v-icon>
+                    </div>
+                    <span>Best Deals</span>
+                  </div>
                 </div>
-              </v-card>
+
+                <!-- CTA Buttons -->
+                <div class="cta-group">
+                  <v-btn
+                    class="download-btn-primary"
+                    @click="downloadAPK"
+                    :loading="isLoading"
+                    :disabled="isLoading"
+                    rounded="xl"
+                    size="large"
+                  >
+                    <template v-slot:loader>
+                      <v-progress-circular indeterminate color="#3f83c7" size="24"></v-progress-circular>
+                    </template>
+                    <v-icon left>mdi-download</v-icon>
+                    <span>
+                      {{ isLoading ? 'Downloading...' : 'Download App' }}
+                    </span>
+                    <v-icon right size="18">mdi-arrow-right</v-icon>
+                  </v-btn>
+
+                  <v-btn
+                    class="learn-more-btn"
+                    @click="scrollToSection('about')"
+                    rounded="xl"
+                    size="large"
+                    variant="text"
+                  >
+                    <span>Learn More</span>
+                    <v-icon right size="18">mdi-chevron-down</v-icon>
+                  </v-btn>
+                </div>
+
+                <!-- Trust Indicators -->
+                <div class="trust-indicators">
+                  <div class="trust-item">
+                    <div class="trust-number">10K+</div>
+                    <div class="trust-label">Active Users</div>
+                  </div>
+                  <div class="trust-divider"></div>
+                  <div class="trust-item">
+                    <div class="trust-number">4.8</div>
+                    <div class="trust-label">
+                      <v-icon size="14" color="#FFB800">mdi-star</v-icon>
+                      <v-icon size="14" color="#FFB800">mdi-star</v-icon>
+                      <v-icon size="14" color="#FFB800">mdi-star</v-icon>
+                      <v-icon size="14" color="#FFB800">mdi-star</v-icon>
+                      <v-icon size="14" color="#FFB800">mdi-star-half</v-icon>
+                    </div>
+                  </div>
+                  <div class="trust-divider"></div>
+                  <div class="trust-item">
+                    <div class="trust-number">500+</div>
+                    <div class="trust-label">Local Shops</div>
+                  </div>
+                </div>
+              </div>
             </v-col>
           </v-row>
         </v-container>
       </section>
 
       <!-- About Section -->
-      <section id="about" class="py-16 about-section">
+      <section id="about" class="about-section">
+        <div class="about-bg-effects">
+          <div class="about-blob-1"></div>
+          <div class="about-blob-2"></div>
+        </div>
+        
         <v-container>
           <v-row>
             <v-col cols="12" class="text-center mb-12">
-              <h2 class="responsive-section-title">About Closeshop</h2>
-              <p class="responsive-section-subtitle">
+              <h2 class="about-title">About Closeshop</h2>
+              <p class="about-subtitle">
                 A Capstone Development Project of Bachelor of Science in Information Systems
                 students in Caraga State University
               </p>
-              <v-divider width="100" class="mx-auto mt-6 primary-divider"></v-divider>
+              <div class="title-decoration">
+                <div class="decoration-line"></div>
+                <div class="decoration-dot"></div>
+                <div class="decoration-line"></div>
+              </div>
             </v-col>
 
-            <!-- Features -->
+            <!-- Features Card -->
             <v-col cols="12" md="7">
-              <v-card class="pa-6 h-100 info-card" elevation="2">
-                <div class="d-flex align-center mb-6">
-                  <div class="icon-wrapper mr-4">
-                    <v-icon size="48" :color="colorPalette.primary.main">mdi-star-circle</v-icon>
+              <v-card class="feature-card" elevation="0">
+                <div class="card-header-modern">
+                  <div class="header-icon">
+                    <v-icon size="32" color="#3f83c7">mdi-star-circle</v-icon>
                   </div>
-                  <h3 class="responsive-feature-title">Key Features</h3>
+                  <h3 class="card-title-modern">Key Features</h3>
                 </div>
-                <v-list lines="two" class="py-0 feature-list">
-                  <!-- Feature 1 -->
-                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
-                    <template v-slot:prepend>
-                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
-                        mdi-school
-                      </v-icon>
-                    </template>
-                    <v-list-item-title class="responsive-feature-text">
-                      Developed by Caraga State University students
-                    </v-list-item-title>
-                  </v-list-item>
-
-                  <!-- Feature 2 -->
-                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
-                    <template v-slot:prepend>
-                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
-                        mdi-chart-line
-                      </v-icon>
-                    </template>
-                    <v-list-item-title class="responsive-feature-text">
-                      Helps business owners grow online visibility
-                    </v-list-item-title>
-                  </v-list-item>
-
-                  <!-- Feature 3 -->
-                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
-                    <template v-slot:prepend>
-                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
-                        mdi-cart
-                      </v-icon>
-                    </template>
-                    <v-list-item-title class="responsive-feature-text">
-                      Improves shopping experience for consumers
-                    </v-list-item-title>
-                  </v-list-item>
-
-                  <!-- Feature 4 -->
-                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
-                    <template v-slot:prepend>
-                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
-                        mdi-account-group
-                      </v-icon>
-                    </template>
-                    <v-list-item-title class="responsive-feature-text">
-                      Easy-to-use interface for all users
-                    </v-list-item-title>
-                  </v-list-item>
-
-                  <!-- Feature 5 -->
-                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
-                    <template v-slot:prepend>
-                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
-                        mdi-map-marker
-                      </v-icon>
-                    </template>
-                    <v-list-item-title class="responsive-feature-text">
-                      Display shop on the map for better visibility and connectivity
-                    </v-list-item-title>
-                  </v-list-item>
-
-                  <!-- Feature 6 -->
-                  <v-list-item class="px-0 mb-3 feature-item responsive-feature-item">
-                    <template v-slot:prepend>
-                      <v-icon :color="colorPalette.primary.main" class="mr-3 mr-sm-4 feature-icon">
-                        mdi-handshake
-                      </v-icon>
-                    </template>
-                    <v-list-item-title class="responsive-feature-text">
-                      Location-based Platform to connect local businesses and customers
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
+                
+                <div class="features-grid">
+                  <div class="feature-item-modern">
+                    <div class="feature-icon-modern">
+                      <v-icon size="22" color="#3f83c7">mdi-school</v-icon>
+                    </div>
+                    <span>Developed by Caraga State University students</span>
+                  </div>
+                  
+                  <div class="feature-item-modern">
+                    <div class="feature-icon-modern">
+                      <v-icon size="22" color="#3f83c7">mdi-chart-line</v-icon>
+                    </div>
+                    <span>Helps business owners grow online visibility</span>
+                  </div>
+                  
+                  <div class="feature-item-modern">
+                    <div class="feature-icon-modern">
+                      <v-icon size="22" color="#3f83c7">mdi-cart</v-icon>
+                    </div>
+                    <span>Improves shopping experience for consumers</span>
+                  </div>
+                  
+                  <div class="feature-item-modern">
+                    <div class="feature-icon-modern">
+                      <v-icon size="22" color="#3f83c7">mdi-account-group</v-icon>
+                    </div>
+                    <span>Easy-to-use interface for all users</span>
+                  </div>
+                  
+                  <div class="feature-item-modern">
+                    <div class="feature-icon-modern">
+                      <v-icon size="22" color="#3f83c7">mdi-map-marker</v-icon>
+                    </div>
+                    <span>Display shop on the map for better visibility and connectivity</span>
+                  </div>
+                  
+                  <div class="feature-item-modern">
+                    <div class="feature-icon-modern">
+                      <v-icon size="22" color="#3f83c7">mdi-handshake</v-icon>
+                    </div>
+                    <span>Location-based Platform to connect local businesses and customers</span>
+                  </div>
+                </div>
               </v-card>
             </v-col>
 
-            <!-- App Info -->
+            <!-- App Info Card -->
             <v-col cols="12" md="5">
-              <v-card class="pa-6 h-100 info-card" elevation="2">
-                <div class="d-flex align-center mb-6">
-                  <div class="icon-wrapper mr-4">
-                    <v-icon size="48" :color="colorPalette.primary.main">mdi-information</v-icon>
+              <v-card class="info-card-modern" elevation="0">
+                <div class="card-header-modern">
+                  <div class="header-icon">
+                    <v-icon size="32" color="#3f83c7">mdi-information</v-icon>
                   </div>
-                  <h3 class="responsive-feature-title">App Details</h3>
+                  <h3 class="card-title-modern">App Details</h3>
                 </div>
-                <v-simple-table class="app-info-table">
-                  <template v-slot:default>
-                    <tbody>
-                      <!-- Developer -->
-                      <tr class="info-row responsive-info-row">
-                        <td
-                          class="font-weight-bold responsive-table-header py-3"
-                          style="color: #3f83c7"
-                        >
-                          Developer
-                        </td>
-                        <td class="responsive-table-data py-3">
-                          <span class="app-info-text"
-                            >Charles Q. Neri, Queen Zayvy P. Israel, Nel O. Ochate</span
-                          >
-                        </td>
-                      </tr>
-                      <!-- Size -->
-                      <tr class="info-row responsive-info-row">
-                        <td
-                          class="font-weight-bold responsive-table-header py-3"
-                          style="color: #3f83c7"
-                        >
-                          Size
-                        </td>
-                        <td class="responsive-table-data py-3">
-                          <span class="app-info-text">12.7 MB</span>
-                        </td>
-                      </tr>
-                      <!-- Requires -->
-                      <tr class="info-row responsive-info-row">
-                        <td
-                          class="font-weight-bold responsive-table-header py-3"
-                          style="color: #3f83c7"
-                        >
-                          Requires
-                        </td>
-                        <td class="responsive-table-data py-3">
-                          <span class="app-info-text">Android 8.0 or higher</span>
-                        </td>
-                      </tr>
-                      <!-- Last Updated -->
-                      <tr class="info-row responsive-info-row">
-                        <td
-                          class="font-weight-bold responsive-table-header py-3"
-                          style="color: #3f83c7"
-                        >
-                          Last Updated
-                        </td>
-                        <td class="responsive-table-data py-3">
-                          <span class="app-info-text">December 2025</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </template>
-                </v-simple-table>
+                
+                <div class="info-items">
+                  <div class="info-row-modern">
+                    <div class="info-label">
+                      <v-icon size="18" color="#3f83c7">mdi-account</v-icon>
+                      <span>Developer</span>
+                    </div>
+                    <div class="info-value">Charles Q. Neri, Queen Zayvy P. Israel, Nel O. Ochate</div>
+                  </div>
+                  
+                  <div class="info-row-modern">
+                    <div class="info-label">
+                      <v-icon size="18" color="#3f83c7">mdi-database</v-icon>
+                      <span>Size</span>
+                    </div>
+                    <div class="info-value">12.7 MB</div>
+                  </div>
+                  
+                  <div class="info-row-modern">
+                    <div class="info-label">
+                      <v-icon size="18" color="#3f83c7">mdi-android</v-icon>
+                      <span>Requires</span>
+                    </div>
+                    <div class="info-value">Android 8.0 or higher</div>
+                  </div>
+                  
+                  <div class="info-row-modern">
+                    <div class="info-label">
+                      <v-icon size="18" color="#3f83c7">mdi-calendar</v-icon>
+                      <span>Last Updated</span>
+                    </div>
+                    <div class="info-value">December 2025</div>
+                  </div>
+                </div>
               </v-card>
             </v-col>
           </v-row>
@@ -664,488 +720,225 @@ onMounted(() => {
       </section>
 
       <!-- Guide Section -->
-      <section id="guide" class="py-16 guide-section">
+      <section id="guide" class="guide-section">
         <v-container>
           <v-row>
             <v-col cols="12" class="text-center mb-12">
-              <h2 class="responsive-section-title">User Guide</h2>
-              <p class="responsive-section-subtitle">
+              <h2 class="guide-title">User Guide</h2>
+              <p class="guide-subtitle">
                 Learn how to make the most of Closeshop with our step-by-step guides
               </p>
-              <v-divider width="100" class="mx-auto mt-6 primary-divider"></v-divider>
             </v-col>
+          </v-row>
 
-            <!-- How to Create an Account Guide -->
-            <v-col cols="12" class="mb-16">
-              <v-card class="pa-6 guide-card" elevation="2">
-                <div class="d-flex align-center mb-6">
-                  <v-icon size="48" :color="colorPalette.primary.main" class="mr-4"
-                    >mdi-account-plus</v-icon
-                  >
-                  <h3 class="responsive-guide-title">How to Create an Account</h3>
+          <!-- Three Guide Cards -->
+          <v-row>
+            <!-- Account Creation Guide -->
+            <v-col cols="12" md="4">
+              <v-card class="guide-card-modern" elevation="0">
+                <div class="card-header">
+                  <div class="card-icon">
+                    <v-icon size="40" color="#3f83c7">mdi-account-plus</v-icon>
+                  </div>
+                  <h3 class="card-title">Create Account</h3>
                 </div>
-
-                <v-stepper v-model="accountCreationStep" class="elevation-0">
-                  <v-stepper-header class="stepper-header">
-                    <v-stepper-step
-                      :complete="accountCreationStep > 1"
-                      step="1"
-                      :color="colorPalette.primary.main"
-                      class="responsive-stepper-step"
+                
+                <div class="steps-preview">
+                  <div class="step-indicator">
+                    <div class="step-dot" :class="{ active: accountCreationStep >= 1 }">1</div>
+                    <div class="step-line" :class="{ active: accountCreationStep >= 2 }"></div>
+                    <div class="step-dot" :class="{ active: accountCreationStep >= 2 }">2</div>
+                    <div class="step-line" :class="{ active: accountCreationStep >= 3 }"></div>
+                    <div class="step-dot" :class="{ active: accountCreationStep >= 3 }">3</div>
+                  </div>
+                  
+                  <div class="step-image" @click="openImageViewer(accountCreationImages[accountCreationStep - 1])">
+                    <v-img
+                      :src="accountCreationImages[accountCreationStep - 1].src"
+                      :alt="accountCreationImages[accountCreationStep - 1].alt"
+                      class="rounded-lg preview-image"
+                      height="180"
+                      cover
                     >
-                      <span class="responsive-step-text">Register Account</span>
-                    </v-stepper-step>
-
-                    <v-divider></v-divider>
-
-                    <v-stepper-step
-                      :complete="accountCreationStep > 2"
-                      step="2"
-                      :color="colorPalette.primary.main"
-                      class="responsive-stepper-step"
-                    >
-                      <span class="responsive-step-text">Verify Email</span>
-                    </v-stepper-step>
-
-                    <v-divider></v-divider>
-
-                    <v-stepper-step
-                      step="3"
-                      :color="colorPalette.primary.main"
-                      class="responsive-stepper-step"
-                    >
-                      <span class="responsive-step-text">Login to Account</span>
-                    </v-stepper-step>
-                  </v-stepper-header>
-
-                  <v-stepper-items>
-                    <v-stepper-content step="1">
-                      <div class="step-content">
-                        <h4 class="responsive-step-title">
-                          {{ accountCreationImages[0].title }}
-                        </h4>
-
-                        <!-- Clickable Image Container -->
-                        <div
-                          class="image-container mb-4"
-                          @click="openImageViewer(accountCreationImages[0])"
-                        >
-                          <v-img
-                            :src="accountCreationImages[0].src"
-                            :alt="accountCreationImages[0].alt"
-                            class="rounded-lg clickable-image"
-                            contain
-                            :style="{ 'max-height': '400px' }"
-                          >
-                            <template v-slot:placeholder>
-                              <div class="image-placeholder">
-                                <v-icon size="48" color="grey">mdi-image</v-icon>
-                              </div>
-                            </template>
-                          </v-img>
-                          <div class="image-overlay">
-                            <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
-                          </div>
+                      <template v-slot:placeholder>
+                        <div class="image-placeholder">
+                          <v-icon size="40" color="grey">mdi-image</v-icon>
                         </div>
-
-                        <p class="responsive-instruction">
-                          {{ accountCreationImages[0].description }}
-                        </p>
-                        <div class="text-center mt-6">
-                          <v-btn
-                            :color="colorPalette.primary.main"
-                            @click="nextAccountStep"
-                            variant="flat"
-                            size="large"
-                            class="responsive-guide-btn"
-                          >
-                            <span class="responsive-btn-text">Next Step</span>
-                            <v-icon right>mdi-arrow-right</v-icon>
-                          </v-btn>
-                        </div>
-                      </div>
-                    </v-stepper-content>
-
-                    <v-stepper-content step="2">
-                      <div class="step-content">
-                        <h4 class="responsive-step-title">
-                          {{ accountCreationImages[1].title }}
-                        </h4>
-
-                        <!-- Clickable Image Container -->
-                        <div
-                          class="image-container mb-4"
-                          @click="openImageViewer(accountCreationImages[1])"
-                        >
-                          <v-img
-                            :src="accountCreationImages[1].src"
-                            :alt="accountCreationImages[1].alt"
-                            class="rounded-lg clickable-image"
-                            contain
-                            :style="{ 'max-height': '400px' }"
-                          >
-                            <template v-slot:placeholder>
-                              <div class="image-placeholder">
-                                <v-icon size="48" color="grey">mdi-image</v-icon>
-                              </div>
-                            </template>
-                          </v-img>
-                          <div class="image-overlay">
-                            <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
-                          </div>
-                        </div>
-
-                        <p class="responsive-instruction">
-                          {{ accountCreationImages[1].description }}
-                        </p>
-                        <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
-                          <v-btn
-                            variant="outlined"
-                            @click="prevAccountStep"
-                            size="large"
-                            class="responsive-guide-btn"
-                          >
-                            <v-icon left>mdi-arrow-left</v-icon>
-                            <span class="responsive-btn-text">Previous</span>
-                          </v-btn>
-                          <v-btn
-                            :color="colorPalette.primary.main"
-                            @click="nextAccountStep"
-                            variant="flat"
-                            size="large"
-                            class="responsive-guide-btn"
-                          >
-                            <span class="responsive-btn-text">Next Step</span>
-                            <v-icon right>mdi-arrow-right</v-icon>
-                          </v-btn>
-                        </div>
-                      </div>
-                    </v-stepper-content>
-
-                    <v-stepper-content step="3">
-                      <div class="step-content">
-                        <h4 class="responsive-step-title">
-                          {{ accountCreationImages[2].title }}
-                        </h4>
-
-                        <!-- Clickable Image Container -->
-                        <div
-                          class="image-container mb-4"
-                          @click="openImageViewer(accountCreationImages[2])"
-                        >
-                          <v-img
-                            :src="accountCreationImages[2].src"
-                            :alt="accountCreationImages[2].alt"
-                            class="rounded-lg clickable-image"
-                            contain
-                            :style="{ 'max-height': '400px' }"
-                          >
-                            <template v-slot:placeholder>
-                              <div class="image-placeholder">
-                                <v-icon size="48" color="grey">mdi-image</v-icon>
-                              </div>
-                            </template>
-                          </v-img>
-                          <div class="image-overlay">
-                            <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
-                          </div>
-                        </div>
-
-                        <p class="responsive-instruction">
-                          {{ accountCreationImages[2].description }}
-                        </p>
-                        <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
-                          <v-btn
-                            variant="outlined"
-                            @click="prevAccountStep"
-                            size="large"
-                            class="responsive-guide-btn"
-                          >
-                            <v-icon left>mdi-arrow-left</v-icon>
-                            <span class="responsive-btn-text">Previous</span>
-                          </v-btn>
-                          <v-btn
-                            :color="colorPalette.primary.main"
-                            @click="restartAccountGuide"
-                            variant="flat"
-                            size="large"
-                            class="responsive-guide-btn"
-                          >
-                            <v-icon left>mdi-restart</v-icon>
-                            <span class="responsive-btn-text">Restart Guide</span>
-                          </v-btn>
-                        </div>
-                      </div>
-                    </v-stepper-content>
-                  </v-stepper-items>
-                </v-stepper>
+                      </template>
+                    </v-img>
+                    <div class="image-zoom-icon">
+                      <v-icon size="20" color="white">mdi-magnify-plus</v-icon>
+                    </div>
+                  </div>
+                  
+                  <p class="step-description">{{ accountCreationImages[accountCreationStep - 1].description }}</p>
+                </div>
+                
+                <div class="card-actions">
+                  <v-btn
+                    class="nav-btn-prev"
+                    :disabled="accountCreationStep === 1"
+                    @click="prevAccountStep"
+                    variant="text"
+                    size="small"
+                  >
+                    <v-icon left>mdi-chevron-left</v-icon>
+                    Previous
+                  </v-btn>
+                  <v-btn
+                    class="nav-btn-next"
+                    :disabled="accountCreationStep === 3"
+                    @click="nextAccountStep"
+                    variant="text"
+                    size="small"
+                    color="primary"
+                  >
+                    Next
+                    <v-icon right>mdi-chevron-right</v-icon>
+                  </v-btn>
+                </div>
+                
+                <div class="card-footer">
+                  <v-btn
+                    class="restart-btn"
+                    @click="restartAccountGuide"
+                    variant="text"
+                    size="small"
+                    block
+                  >
+                    <v-icon left size="16">mdi-restart</v-icon>
+                    Restart Guide
+                  </v-btn>
+                </div>
               </v-card>
             </v-col>
 
-            <!-- How to Create a Shop Guide -->
-            <v-col cols="12" class="mb-16">
-              <v-card class="pa-6 guide-card" elevation="2">
-                <div class="d-flex align-center mb-6">
-                  <v-icon size="48" :color="colorPalette.primary.main" class="mr-4"
-                    >mdi-store-plus</v-icon
-                  >
-                  <h3 class="responsive-guide-title">How to Create a Shop</h3>
+            <!-- Shop Creation Guide -->
+            <v-col cols="12" md="4">
+              <v-card class="guide-card-modern" elevation="0">
+                <div class="card-header">
+                  <div class="card-icon">
+                    <v-icon size="40" color="#3f83c7">mdi-store-plus</v-icon>
+                  </div>
+                  <h3 class="card-title">Create Shop</h3>
                 </div>
-
-                <v-stepper v-model="shopCreationStep" class="elevation-0">
-                  <v-stepper-header class="stepper-header">
-                    <v-stepper-step
-                      :complete="shopCreationStep > 1"
-                      step="1"
-                      :color="colorPalette.primary.main"
-                      class="responsive-stepper-step"
+                
+                <div class="steps-preview">
+                  <div class="step-indicator">
+                    <div class="step-dot" :class="{ active: shopCreationStep >= 1 }">1</div>
+                    <div class="step-line" :class="{ active: shopCreationStep >= 2 }"></div>
+                    <div class="step-dot" :class="{ active: shopCreationStep >= 2 }">2</div>
+                    <div class="step-line" :class="{ active: shopCreationStep >= 3 }"></div>
+                    <div class="step-dot" :class="{ active: shopCreationStep >= 3 }">3</div>
+                  </div>
+                  
+                  <div class="step-image" @click="openImageViewer(shopGuideImages[shopCreationStep - 1])">
+                    <v-img
+                      :src="shopGuideImages[shopCreationStep - 1].src"
+                      :alt="shopGuideImages[shopCreationStep - 1].alt"
+                      class="rounded-lg preview-image"
+                      height="180"
+                      cover
                     >
-                      <span class="responsive-step-text">Access Create Shop</span>
-                    </v-stepper-step>
-
-                    <v-divider></v-divider>
-
-                    <v-stepper-step
-                      :complete="shopCreationStep > 2"
-                      step="2"
-                      :color="colorPalette.primary.main"
-                      class="responsive-stepper-step"
-                    >
-                      <span class="responsive-step-text">Fill Shop Details</span>
-                    </v-stepper-step>
-
-                    <v-divider></v-divider>
-
-                    <v-stepper-step
-                      step="3"
-                      :color="colorPalette.primary.main"
-                      class="responsive-stepper-step"
-                    >
-                      <span class="responsive-step-text">Wait for Approval</span>
-                    </v-stepper-step>
-                  </v-stepper-header>
-
-                  <v-stepper-items>
-                    <v-stepper-content step="1">
-                      <div class="step-content">
-                        <h4 class="responsive-step-title">
-                          {{ shopGuideImages[0].title }}
-                        </h4>
-
-                        <!-- Clickable Image Container -->
-                        <div
-                          class="image-container mb-4"
-                          @click="openImageViewer(shopGuideImages[0])"
-                        >
-                          <v-img
-                            :src="shopGuideImages[0].src"
-                            :alt="shopGuideImages[0].alt"
-                            class="rounded-lg clickable-image"
-                            contain
-                            :style="{ 'max-height': '400px' }"
-                          >
-                            <template v-slot:placeholder>
-                              <div class="image-placeholder">
-                                <v-icon size="48" color="grey">mdi-image</v-icon>
-                              </div>
-                            </template>
-                          </v-img>
-                          <div class="image-overlay">
-                            <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
-                          </div>
+                      <template v-slot:placeholder>
+                        <div class="image-placeholder">
+                          <v-icon size="40" color="grey">mdi-image</v-icon>
                         </div>
-
-                        <p class="responsive-instruction">
-                          {{ shopGuideImages[0].description }}
-                        </p>
-                        <div class="text-center mt-6">
-                          <v-btn
-                            :color="colorPalette.primary.main"
-                            @click="nextShopStep"
-                            variant="flat"
-                            size="large"
-                            class="responsive-guide-btn"
-                          >
-                            <span class="responsive-btn-text">Next Step</span>
-                            <v-icon right>mdi-arrow-right</v-icon>
-                          </v-btn>
-                        </div>
-                      </div>
-                    </v-stepper-content>
-
-                    <v-stepper-content step="2">
-                      <div class="step-content">
-                        <h4 class="responsive-step-title">
-                          {{ shopGuideImages[1].title }}
-                        </h4>
-
-                        <!-- Clickable Image Container -->
-                        <div
-                          class="image-container mb-4"
-                          @click="openImageViewer(shopGuideImages[1])"
-                        >
-                          <v-img
-                            :src="shopGuideImages[1].src"
-                            :alt="shopGuideImages[1].alt"
-                            class="rounded-lg clickable-image"
-                            contain
-                            :style="{ 'max-height': '400px' }"
-                          >
-                            <template v-slot:placeholder>
-                              <div class="image-placeholder">
-                                <v-icon size="48" color="grey">mdi-image</v-icon>
-                              </div>
-                            </template>
-                          </v-img>
-                          <div class="image-overlay">
-                            <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
-                          </div>
-                        </div>
-
-                        <p class="responsive-instruction">
-                          {{ shopGuideImages[1].description }}
-                        </p>
-                        <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
-                          <v-btn
-                            variant="outlined"
-                            @click="prevShopStep"
-                            size="large"
-                            class="responsive-guide-btn"
-                          >
-                            <v-icon left>mdi-arrow-left</v-icon>
-                            <span class="responsive-btn-text">Previous</span>
-                          </v-btn>
-                          <v-btn
-                            :color="colorPalette.primary.main"
-                            @click="nextShopStep"
-                            variant="flat"
-                            size="large"
-                            class="responsive-guide-btn"
-                          >
-                            <span class="responsive-btn-text">Next Step</span>
-                            <v-icon right>mdi-arrow-right</v-icon>
-                          </v-btn>
-                        </div>
-                      </div>
-                    </v-stepper-content>
-
-                    <v-stepper-content step="3">
-                      <div class="step-content">
-                        <h4 class="responsive-step-title">
-                          {{ shopGuideImages[2].title }}
-                        </h4>
-
-                        <!-- Clickable Image Container -->
-                        <div
-                          class="image-container mb-4"
-                          @click="openImageViewer(shopGuideImages[2])"
-                        >
-                          <v-img
-                            :src="shopGuideImages[2].src"
-                            :alt="shopGuideImages[2].alt"
-                            class="rounded-lg clickable-image"
-                            contain
-                            :style="{ 'max-height': '400px' }"
-                          >
-                            <template v-slot:placeholder>
-                              <div class="image-placeholder">
-                                <v-icon size="48" color="grey">mdi-image</v-icon>
-                              </div>
-                            </template>
-                          </v-img>
-                          <div class="image-overlay">
-                            <v-icon size="24" color="white">mdi-magnify-plus-outline</v-icon>
-                            <span class="ml-2 responsive-overlay-text">Click to zoom</span>
-                          </div>
-                        </div>
-
-                        <p class="responsive-instruction">
-                          {{ shopGuideImages[2].description }}
-                        </p>
-                        <div class="d-flex justify-space-between mt-6 responsive-guide-btns">
-                          <v-btn
-                            variant="outlined"
-                            @click="prevShopStep"
-                            size="large"
-                            class="responsive-guide-btn"
-                          >
-                            <v-icon left>mdi-arrow-left</v-icon>
-                            <span class="responsive-btn-text">Previous</span>
-                          </v-btn>
-                          <v-btn
-                            :color="colorPalette.primary.main"
-                            @click="restartShopGuide"
-                            variant="flat"
-                            size="large"
-                            class="responsive-guide-btn"
-                          >
-                            <v-icon left>mdi-restart</v-icon>
-                            <span class="responsive-btn-text">Restart Guide</span>
-                          </v-btn>
-                        </div>
-                      </div>
-                    </v-stepper-content>
-                  </v-stepper-items>
-                </v-stepper>
+                      </template>
+                    </v-img>
+                    <div class="image-zoom-icon">
+                      <v-icon size="20" color="white">mdi-magnify-plus</v-icon>
+                    </div>
+                  </div>
+                  
+                  <p class="step-description">{{ shopGuideImages[shopCreationStep - 1].description }}</p>
+                </div>
+                
+                <div class="card-actions">
+                  <v-btn
+                    class="nav-btn-prev"
+                    :disabled="shopCreationStep === 1"
+                    @click="prevShopStep"
+                    variant="text"
+                    size="small"
+                  >
+                    <v-icon left>mdi-chevron-left</v-icon>
+                    Previous
+                  </v-btn>
+                  <v-btn
+                    class="nav-btn-next"
+                    :disabled="shopCreationStep === 3"
+                    @click="nextShopStep"
+                    variant="text"
+                    size="small"
+                    color="primary"
+                  >
+                    Next
+                    <v-icon right>mdi-chevron-right</v-icon>
+                  </v-btn>
+                </div>
+                
+                <div class="card-footer">
+                  <v-btn
+                    class="restart-btn"
+                    @click="restartShopGuide"
+                    variant="text"
+                    size="small"
+                    block
+                  >
+                    <v-icon left size="16">mdi-restart</v-icon>
+                    Restart Guide
+                  </v-btn>
+                </div>
               </v-card>
             </v-col>
 
             <!-- Navigation Guide -->
-            <v-col cols="12">
-              <v-card class="pa-6 guide-card" elevation="2">
-                <div class="d-flex align-center mb-6">
-                  <v-icon size="48" :color="colorPalette.primary.main" class="mr-4"
-                    >mdi-navigation</v-icon
-                  >
-                  <h3 class="responsive-guide-title">App Navigation Guide</h3>
+            <v-col cols="12" md="4">
+              <v-card class="guide-card-modern navigation-guide-card" elevation="0">
+                <div class="card-header">
+                  <div class="card-icon">
+                    <v-icon size="40" color="#3f83c7">mdi-navigation</v-icon>
+                  </div>
+                  <h3 class="card-title">App Navigation</h3>
                 </div>
-
-                <p class="responsive-guide-intro">
-                  Explore the main sections of the Closeshop app. Click on any image to view it in
-                  full screen.
-                </p>
-
-                <v-row>
-                  <v-col
-                    v-for="image in navigationImages"
+                
+                <div class="navigation-grid">
+                  <div
+                    v-for="image in navigationImages.slice(0, 4)"
                     :key="image.id"
-                    cols="12"
-                    sm="6"
-                    class="mb-6"
+                    class="nav-thumbnail"
+                    @click="openImageViewer(image)"
                   >
-                    <div class="navigation-card pa-4 h-100" @click="openImageViewer(image)">
-                      <!-- Clickable Image -->
-                      <div class="image-container mb-4">
-                        <v-img
-                          :src="image.src"
-                          :alt="image.alt"
-                          class="mb-4 rounded-lg clickable-image"
-                          contain
-                          :style="{ 'max-height': '250px' }"
-                        >
-                          <template v-slot:placeholder>
-                            <div class="image-placeholder">
-                              <v-icon size="48" color="grey">mdi-image</v-icon>
-                            </div>
-                          </template>
-                        </v-img>
-                        <div class="image-overlay small">
-                          <v-icon size="20" color="white">mdi-magnify-plus-outline</v-icon>
+                    <v-img
+                      :src="image.src"
+                      :alt="image.alt"
+                      class="thumbnail-image"
+                      height="60"
+                      cover
+                    >
+                      <template v-slot:placeholder>
+                        <div class="thumbnail-placeholder">
+                          <v-icon size="20" color="grey">mdi-image</v-icon>
                         </div>
-                      </div>
-
-                      <h4 class="responsive-nav-title">{{ image.title }}</h4>
-                      <p class="responsive-nav-description">
-                        {{ image.description }}
-                      </p>
-                    </div>
-                  </v-col>
-                </v-row>
+                      </template>
+                    </v-img>
+                    <span class="thumbnail-label">{{ image.title }}</span>
+                  </div>
+                </div>
+                
+                <div class="view-all-btn">
+                  <v-btn
+                    class="view-all-link"
+                    variant="text"
+                    color="primary"
+                    block
+                    @click="openImageViewer(navigationImages[0])"
+                  >
+                    View All Sections
+                    <v-icon right size="16">mdi-arrow-right</v-icon>
+                  </v-btn>
+                </div>
               </v-card>
             </v-col>
           </v-row>
@@ -1153,86 +946,61 @@ onMounted(() => {
       </section>
 
       <!-- Download Section -->
-      <section id="download-section" class="py-16 download-section">
+      <section id="download-section" class="download-section">
+        <div class="download-bg-effects">
+          <div class="download-particle-1"></div>
+          <div class="download-particle-2"></div>
+          <div class="download-particle-3"></div>
+        </div>
+        
         <v-container>
           <v-row align="center" justify="center">
             <v-col cols="12" md="10" lg="8" class="text-center">
-              <v-card
-                class="pa-8 pa-sm-12 download-card"
-                :style="{ background: colorPalette.primary.gradient }"
-                elevation="8"
-              >
-                <div class="android-icon mb-6">
-                  <v-icon size="80" color="white">mdi-android</v-icon>
+              <v-card class="download-card" elevation="0">
+                <div class="android-icon-wrapper">
+                  <div class="android-pulse"></div>
+                  <v-icon size="80" color="white" class="android-icon">mdi-android</v-icon>
                 </div>
 
-                <h2 class="responsive-download-title text-white">Ready to Get Started?</h2>
+                <h2 class="download-title">Ready to Get Started?</h2>
 
-                <p class="responsive-download-subtitle text-white">
+                <p class="download-subtitle">
                   Join thousands of satisfied users. Download Closeshop today and transform your
                   shopping experience.
                 </p>
 
                 <v-btn
-                  color="white"
+                  class="download-btn-modern"
                   size="x-large"
                   @click="downloadAPK"
-                  rounded
-                  class="px-8 mb-4 download-action-btn responsive-download-action-btn"
                   :loading="isLoading"
                   :disabled="isLoading"
                 >
                   <template v-slot:loader>
-                    <v-progress-circular
-                      indeterminate
-                      :color="colorPalette.primary.main"
-                      size="24"
-                    ></v-progress-circular>
+                    <v-progress-circular indeterminate color="#3f83c7" size="24"></v-progress-circular>
                   </template>
                   <v-icon left>mdi-download</v-icon>
-                  <span class="responsive-btn-label">
-                    {{
-                      isLoading
-                        ? 'Downloading...'
-                        : isMobileDevice
-                          ? 'Download for Android'
-                          : 'Download Free APK'
-                    }}
+                  <span>
+                    {{ isLoading ? 'Downloading...' : isMobileDevice ? 'Download for Android' : 'Download Free APK' }}
                   </span>
+                  <v-icon right size="20" class="download-arrow">mdi-arrow-right</v-icon>
                 </v-btn>
 
-                <div class="mt-8">
-                  <p class="responsive-download-info text-white">
-                    Version 1.0.0 • 25 MB • Android 8.0+
-                  </p>
-                  <div>
-                    <v-chip
-                      class="ma-1 responsive-chip"
-                      color="white"
-                      :text-color="colorPalette.primary.main"
-                      size="small"
-                    >
-                      <v-icon left size="small">mdi-shield-check</v-icon>
-                      <span class="responsive-chip-text">No Ads</span>
-                    </v-chip>
-                    <v-chip
-                      class="ma-1 responsive-chip"
-                      color="white"
-                      :text-color="colorPalette.primary.main"
-                      size="small"
-                    >
-                      <v-icon left size="small">mdi-update</v-icon>
-                      <span class="responsive-chip-text">Regular Updates</span>
-                    </v-chip>
-                    <v-chip
-                      class="ma-1 responsive-chip"
-                      color="white"
-                      :text-color="colorPalette.primary.main"
-                      size="small"
-                    >
-                      <v-icon left size="small">mdi-headset</v-icon>
-                      <span class="responsive-chip-text">Free Support</span>
-                    </v-chip>
+                <div class="download-info">
+                  <p class="version-info">Version 1.0.0 • 25 MB • Android 8.0+</p>
+                  <div class="feature-chips">
+                    <div class="chip-modern">
+                      <v-icon left size="16">mdi-shield-check</v-icon>
+                      <span>No Ads</span>
+                    </div>
+                    <div class="chip-modern">
+                      <v-icon left size="16">mdi-update</v-icon>
+                      <span>Regular Updates</span>
+                    </div>
+                    <div class="chip-modern">
+                      <v-icon left size="16">mdi-headset</v-icon>
+                      <span>Free Support</span>
+                    </div>
                   </div>
                 </div>
               </v-card>
@@ -1240,50 +1008,220 @@ onMounted(() => {
           </v-row>
         </v-container>
       </section>
-    </v-main>
 
+            <!-- Rider Application Section -->
+            <section id="rider-application" class="rider-section">
+              <div class="rider-bg-effects">
+                <div class="rider-glow-1"></div>
+                <div class="rider-glow-2"></div>
+              </div>
+              
+              <v-container>
+                <v-row align="center" justify="center">
+                  <v-col cols="12" md="10" lg="8" class="text-center">
+                    <div class="rider-content">
+                      <h2 class="rider-title">Become a <span class="title-gradient">Rider Partner</span></h2>
+                      <p class="rider-subtitle">
+                        Join our network of trusted riders and earn by delivering for local businesses. Sign
+                        up today to start your journey with Closeshop!
+                      </p>
+                      <v-btn
+                        class="rider-cta-btn"
+                        size="large"
+                        @click="applyRider"
+                      >
+                        <v-icon left>mdi-bike-fast</v-icon>
+                        <span>Apply Now</span>
+                      </v-btn>
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </section>
+
+      <!-- Help Section-->
+      <section id="help" class="help-section">
+        <div class="help-background">
+          <div class="help-blob-1"></div>
+          <div class="help-blob-2"></div>
+          <div class="help-blob-3"></div>
+        </div>
+        
+        <v-container>
+          <v-row align="center" justify="center">
+            <v-col cols="12" md="10" lg="8" class="text-center">
+              <div class="help-content">
+                <!-- Section Badge -->
+                <div class="section-badge">
+                  <v-icon size="18" color="#3f83c7">mdi-headset</v-icon>
+                  <span>Support 24/7</span>
+                </div>
+
+                <!-- Title -->
+                <h2 class="help-title">
+                  Need Assistance?
+                </h2>
+                
+                <!-- Subtitle -->
+                <p class="help-subtitle">
+                  Our support team is here to help you with any questions or issues you may have. 
+                  Feel free to reach out to us through the following contact information, 
+                  and we'll get back to you as soon as possible.
+                </p>
+
+                <!-- Contact Cards Container -->
+                <div class="contact-container">
+                  <!-- Phone Card -->
+                  <div class="contact-card-modern phone-card">
+                    <div class="card-glow"></div>
+                    <div class="card-icon-wrapper">
+                      <v-icon size="32" color="#3f83c7">mdi-phone-in-talk</v-icon>
+                    </div>
+                    <h3 class="card-title">Call Us</h3>
+                    <p class="card-description">Mon-Fri, 9AM - 6PM</p>
+                    <div class="contact-info-wrapper">
+                      <v-icon size="20" color="#3f83c7">mdi-phone</v-icon>
+                      <a href="tel:09700314367" class="contact-link">0970 031 4367</a>
+                    </div>
+                    <div class="card-action">
+                      <v-btn class="call-btn" href="tel:09700314367" small rounded>
+                        <v-icon left size="18">mdi-phone</v-icon>
+                        <span>Call Now</span>
+                      </v-btn>
+                    </div>
+                  </div>
+
+                  <!-- Email Card -->
+                  <div class="contact-card-modern email-card">
+                    <div class="card-glow"></div>
+                    <div class="card-icon-wrapper">
+                      <v-icon size="32" color="#3f83c7">mdi-email-open</v-icon>
+                    </div>
+                    <h3 class="card-title">Email Us</h3>
+                    <p class="card-description">We'll respond within 24h</p>
+                    <div class="contact-info-wrapper">
+                      <v-icon size="20" color="#3f83c7">mdi-email</v-icon>
+                      <a href="mailto:closeshop8600@gmail.com" class="contact-link">closeshop8600@gmail.com</a>
+                    </div>
+                    <div class="card-action">
+                      <v-btn class="email-btn" href="mailto:closeshop8600@gmail.com" small rounded>
+                        <v-icon left size="18">mdi-email</v-icon>
+                        <span>Send Email</span>
+                      </v-btn>
+                    </div>
+                  </div>
+
+                  <!-- Live Chat Card (Optional) -->
+                  <div class="contact-card-modern chat-card">
+                    <div class="card-glow"></div>
+                    <div class="card-icon-wrapper">
+                      <v-icon size="32" color="#3f83c7">mdi-chat-processing</v-icon>
+                    </div>
+                    <h3 class="card-title">Live Chat</h3>
+                    <p class="card-description">Instant support</p>
+                    <div class="contact-info-wrapper">
+                      <v-icon size="20" color="#3f83c7">mdi-clock-outline</v-icon>
+                      <span class="availability">Available 24/7</span>
+                    </div>
+                    <div class="card-action">
+                      <v-btn class="chat-btn" small rounded @click="startLiveChat">
+                        <v-icon left size="18">mdi-chat</v-icon>
+                        <span>Start Chat</span>
+                      </v-btn>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Additional Support Info -->
+                <div class="support-info">
+                  <div class="info-item">
+                    <v-icon size="20" color="#60a5fa">mdi-clock</v-icon>
+                    <span>Response Time: &lt; 24 hours</span>
+                  </div>
+                  <div class="info-divider"></div>
+                  <div class="info-item">
+                    <v-icon size="20" color="#60a5fa">mdi-check-circle</v-icon>
+                    <span>Free Support for all users</span>
+                  </div>
+                  <div class="info-divider"></div>
+                  <div class="info-item">
+                    <v-icon size="20" color="#60a5fa">mdi-message-text</v-icon>
+                    <span>Emergency support available</span>
+                  </div>
+                </div>
+              </div>
+            </v-col>
+          </v-row>
+        </v-container>
+      </section>
+    </v-main>
+    
     <!-- Footer -->
-    <v-footer :style="{ background: colorPalette.primary.gradient }" class="mt-auto">
+    <v-footer class="modern-footer mt-auto">
       <v-container>
-        <v-row>
+        <v-row class="footer-content">
           <v-col cols="12" md="6" class="text-center text-md-left">
-            <div class="d-flex align-center justify-center justify-md-start mb-4">
-              <v-img
-                :src="logoUrl"
-                alt="Closeshop Logo"
-                max-height="40"
-                max-width="40"
-                class="mr-3 responsive-footer-logo"
-              ></v-img>
-              <h3 class="responsive-footer-title text-white">Closeshop</h3>
+            <div class="footer-brand">
+              <div class="footer-logo-wrapper">
+                <v-img
+                  :src="logoUrl"
+                  alt="Closeshop Logo"
+                  max-height="35"
+                  max-width="35"
+                  class="footer-logo"
+                  contain
+                ></v-img>
+                <span class="footer-brand-name">Close<span class="brand-accent">Shop</span></span>
+              </div>
+              <p class="footer-tagline">
+                Connecting businesses with customers seamlessly
+              </p>
             </div>
-            <p class="responsive-footer-text text-white mb-0">
-              © 2024 Closeshop Team, Caraga State University. All rights reserved.
+            <p class="responsive-footer-text copyright-text">
+              © 2025 Closeshop Team, Caraga State University. All rights reserved.
             </p>
           </v-col>
 
           <v-col cols="12" md="6" class="text-center text-md-right">
-            <div class="mb-4">
-              <v-btn
-                v-for="link in footerLinks"
-                :key="link.text"
-                :href="link.href"
-                target="_blank"
-                icon
-                variant="text"
-                size="small"
-                class="mx-2 responsive-footer-icon"
-                color="white"
-                :title="link.text"
-              >
-                <v-icon>{{ link.icon }}</v-icon>
-              </v-btn>
+            <div class="footer-social">
+              <p class="social-label">Follow us</p>
+              <div class="social-icons">
+                <v-btn
+                  v-for="link in footerLinks"
+                  :key="link.text"
+                  :href="link.href"
+                  target="_blank"
+                  icon
+                  variant="text"
+                  size="small"
+                  class="social-icon-btn"
+                  :title="link.text"
+                >
+                  <v-icon>{{ link.icon }}</v-icon>
+                  <span class="social-tooltip">{{ link.text }}</span>
+                </v-btn>
+              </div>
             </div>
-            <p class="responsive-footer-contact text-white">
-              closeshop@example.com • +63 123 456 7890
-            </p>
+            <div class="footer-credit">
+              <p class="credit-text">Made with <span class="heart">❤️</span> for local businesses</p>
+            </div>
           </v-col>
         </v-row>
+        
+        <!-- Bottom Bar -->
+        <div class="footer-bottom">
+          <div class="bottom-links">
+            <a href="#" @click.prevent="scrollToSection('home')" class="bottom-link">Home</a>
+            <span class="link-divider">•</span>
+            <a href="#" @click.prevent="scrollToSection('about')" class="bottom-link">About</a>
+            <span class="link-divider">•</span>
+            <a href="#" @click.prevent="scrollToSection('guide')" class="bottom-link">Guide</a>
+            <span class="link-divider">•</span>
+            <a href="#" @click.prevent="scrollToSection('download-section')" class="bottom-link">Download</a>
+            <span class="link-divider">•</span>
+            <a href="#" @click.prevent="scrollToSection('help')" class="bottom-link">Contact</a>
+          </div>
+        </div>
       </v-container>
     </v-footer>
 
@@ -1650,7 +1588,391 @@ onMounted(() => {
   width: 100% !important;
   white-space: normal !important;
 }
+.contact-card {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 16px;
+  background: #f8fafc;
+}
 
+.contact-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1f2937;
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 600px) {
+  .contact-text {
+    font-size: 14px;
+  }
+}
+
+/* ============ MODERN ABOUT SECTION STYLES ============ */
+
+.about-section {
+  position: relative;
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
+  overflow: hidden;
+}
+
+/* Animated Background Effects */
+.about-bg-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.about-blob-1 {
+  position: absolute;
+  top: -20%;
+  right: -5%;
+  width: 50%;
+  height: 50%;
+  background: radial-gradient(circle, rgba(63, 131, 199, 0.06) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: blobFloat 18s ease-in-out infinite;
+}
+
+.about-blob-2 {
+  position: absolute;
+  bottom: -20%;
+  left: -5%;
+  width: 40%;
+  height: 40%;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.05) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: blobFloat 22s ease-in-out infinite reverse;
+}
+
+@keyframes blobFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(40px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-30px, 20px) scale(0.9);
+  }
+}
+
+/* Section Header */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 6px 18px;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(63, 131, 199, 0.15);
+}
+
+.section-badge span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.about-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.title-gradient {
+  background: linear-gradient(135deg, #3f83c7 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.about-subtitle {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto 1.5rem auto;
+  line-height: 1.6;
+}
+
+.title-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.decoration-line {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #3f83c7, transparent);
+}
+
+.decoration-dot {
+  width: 6px;
+  height: 6px;
+  background: #3f83c7;
+  border-radius: 50%;
+}
+
+/* Feature Card */
+.feature-card {
+  background: white;
+  border-radius: 28px !important;
+  padding: 2rem;
+  height: 100%;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(63, 131, 199, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(63, 131, 199, 0.08) !important;
+  border-color: rgba(63, 131, 199, 0.15);
+}
+
+/* Info Card */
+.info-card-modern {
+  background: white;
+  border-radius: 28px !important;
+  padding: 2rem;
+  height: 100%;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(63, 131, 199, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+}
+
+.info-card-modern:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(63, 131, 199, 0.08) !important;
+  border-color: rgba(63, 131, 199, 0.15);
+}
+
+/* Card Header */
+.card-header-modern {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(63, 131, 199, 0.1);
+}
+
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(63, 131, 199, 0.1), rgba(96, 165, 250, 0.1));
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-title-modern {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* Features Grid */
+.features-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feature-item-modern {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0.75rem;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.feature-item-modern:hover {
+  background: rgba(63, 131, 199, 0.04);
+  transform: translateX(4px);
+}
+
+.feature-icon-modern {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: rgba(63, 131, 199, 0.08);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.feature-item-modern:hover .feature-icon-modern {
+  background: rgba(63, 131, 199, 0.15);
+  transform: scale(1.05);
+}
+
+.feature-item-modern span {
+  font-size: 0.9375rem;
+  color: #334155;
+  line-height: 1.5;
+  flex: 1;
+}
+
+/* Info Items */
+.info-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.info-row-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.info-row-modern:hover {
+  background: rgba(63, 131, 199, 0.04);
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #3f83c7;
+}
+
+.info-value {
+  font-size: 0.9375rem;
+  color: #334155;
+  line-height: 1.5;
+  padding-left: 26px;
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .about-section {
+    padding: 3rem 0;
+  }
+  
+  .feature-card,
+  .info-card-modern {
+    padding: 1.5rem;
+  }
+  
+  .card-title-modern {
+    font-size: 1.25rem;
+  }
+  
+  .feature-item-modern span {
+    font-size: 0.875rem;
+  }
+  
+  .info-value {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .feature-card,
+  .info-card-modern {
+    padding: 1.25rem;
+  }
+  
+  .card-header-modern {
+    margin-bottom: 1.25rem;
+  }
+  
+  .header-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .header-icon .v-icon {
+    font-size: 24px !important;
+  }
+  
+  .card-title-modern {
+    font-size: 1.125rem;
+  }
+  
+  .feature-icon-modern {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .feature-icon-modern .v-icon {
+    font-size: 18px !important;
+  }
+  
+  .feature-item-modern span {
+    font-size: 0.8125rem;
+  }
+  
+  .info-label {
+    font-size: 0.7rem;
+  }
+  
+  .info-value {
+    font-size: 0.8125rem;
+    padding-left: 20px;
+  }
+  
+  .decoration-line {
+    width: 30px;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feature-card,
+.info-card-modern {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.feature-card {
+  animation-delay: 0.1s;
+}
+
+.info-card-modern {
+  animation-delay: 0.2s;
+}
 /* Guide Section */
 .responsive-guide-title {
   font-size: clamp(1.5rem, 5vw, 2rem) !important;
@@ -1743,36 +2065,1600 @@ onMounted(() => {
   margin-bottom: 1rem !important;
 }
 
+/* ============ MODERN GUIDE SECTION ============ */
+
+.guide-section {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+/* Section Header */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-badge span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.guide-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: #0f172a;
+}
+
+.title-gradient {
+  background: linear-gradient(135deg, #3f83c7 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.guide-subtitle {
+  font-size: 1rem;
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Modern Guide Cards */
+.guide-card-modern {
+  background: white;
+  border-radius: 24px !important;
+  padding: 1.5rem;
+  height: 100%;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(63, 131, 199, 0.1);
+}
+
+.guide-card-modern:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(63, 131, 199, 0.1) !important;
+  border-color: rgba(63, 131, 199, 0.2);
+}
+
+/* Card Header */
+.card-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.card-icon {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, rgba(63, 131, 199, 0.1), rgba(96, 165, 250, 0.1));
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* Step Indicator */
+.steps-preview {
+  margin-bottom: 1.5rem;
+}
+
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.step-dot {
+  width: 32px;
+  height: 32px;
+  background: #e2e8f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+  transition: all 0.3s ease;
+}
+
+.step-dot.active {
+  background: linear-gradient(135deg, #3f83c7, #2563eb);
+  color: white;
+  box-shadow: 0 4px 12px rgba(63, 131, 199, 0.3);
+}
+
+.step-line {
+  width: 40px;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 8px;
+  transition: all 0.3s ease;
+}
+
+.step-line.active {
+  background: linear-gradient(90deg, #3f83c7, #2563eb);
+}
+
+/* Step Image */
+.step-image {
+  position: relative;
+  cursor: pointer;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.preview-image {
+  transition: transform 0.3s ease;
+}
+
+.step-image:hover .preview-image {
+  transform: scale(1.05);
+}
+
+.image-zoom-icon {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  padding: 6px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.step-image:hover .image-zoom-icon {
+  opacity: 1;
+}
+
+.step-description {
+  font-size: 0.875rem;
+  color: #475569;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.nav-btn-prev,
+.nav-btn-next {
+  flex: 1;
+  text-transform: none !important;
+  font-weight: 500 !important;
+}
+
+.card-footer {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
+}
+
+.restart-btn {
+  text-transform: none !important;
+  color: #64748b !important;
+  font-size: 0.75rem !important;
+}
+
+.restart-btn:hover {
+  color: #3f83c7 !important;
+  background: rgba(63, 131, 199, 0.05) !important;
+}
+
+/* Navigation Guide Card */
+.navigation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.nav-thumbnail {
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 12px;
+}
+
+.nav-thumbnail:hover {
+  background: rgba(63, 131, 199, 0.05);
+  transform: translateY(-2px);
+}
+
+.thumbnail-image {
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.thumbnail-placeholder {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  border-radius: 12px;
+}
+
+.thumbnail-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.view-all-btn {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
+}
+
+.view-all-link {
+  text-transform: none !important;
+  font-weight: 600 !important;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .guide-section {
+    padding: 3rem 0;
+  }
+  
+  .guide-card-modern {
+    margin-bottom: 1.5rem;
+  }
+  
+  .step-line {
+    width: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .step-line {
+    width: 20px;
+  }
+  
+  .step-dot {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+  
+  .card-title {
+    font-size: 1.125rem;
+  }
+  
+  .navigation-grid {
+    gap: 0.75rem;
+  }
+}
+
+/* ============ DOWNLOAD SECTION STYLES ============ */
+
+.download-section {
+  position: relative;
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%);
+  overflow: hidden;
+}
+
+/* Animated Background Effects */
+.download-bg-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.download-particle-1 {
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(63, 131, 199, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: particleFloat 18s ease-in-out infinite;
+}
+
+.download-particle-2 {
+  position: absolute;
+  bottom: -20%;
+  left: -10%;
+  width: 50%;
+  height: 50%;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: particleFloat 22s ease-in-out infinite reverse;
+}
+
+.download-particle-3 {
+  position: absolute;
+  top: 40%;
+  left: 30%;
+  width: 40%;
+  height: 40%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: particleFloat 15s ease-in-out infinite 1s;
+}
+
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(40px, -40px) scale(1.2);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.8);
+  }
+}
+
+/* Download Card */
+.download-card {
+  background: linear-gradient(135deg, #437db7 0%, #153783 50%, #3c55aa 100%) !important;
+  border-radius: 40px !important;
+  padding: 3rem 2rem !important;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(63, 131, 199, 0.3) !important;
+  transition: all 0.3s ease;
+}
+
+.download-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: cardShine 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes cardShine {
+  0%, 100% {
+    transform: translate(-30%, -30%) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(30%, 30%) rotate(180deg);
+    opacity: 0.5;
+  }
+}
+
+.download-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 50px rgba(63, 131, 199, 0.4) !important;
+}
+
+/* Android Icon */
+.android-icon-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.android-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulseRing 2s ease-out infinite;
+}
+
+@keyframes pulseRing {
+  0% {
+    width: 60px;
+    height: 60px;
+    opacity: 0.8;
+  }
+  100% {
+    width: 120px;
+    height: 120px;
+    opacity: 0;
+  }
+}
+
+.android-icon {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Title */
+.download-title {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 800;
+  color: white;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Subtitle */
+.download-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 500px;
+  margin: 0 auto 2rem auto;
+  line-height: 1.6;
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+/* Download Button */
+.download-btn-modern {
+  background: white !important;
+  color: #3f83c7 !important;
+  padding: 12px 32px !important;
+  font-size: 1.125rem !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  border-radius: 60px !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.3s ease !important;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+  position: relative;
+  overflow: hidden;
+}
+
+.download-btn-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(63, 131, 199, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.download-btn-modern:hover::before {
+  left: 100%;
+}
+
+.download-btn-modern:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2) !important;
+}
+
+.download-btn-modern:active {
+  transform: translateY(0);
+}
+
+.download-arrow {
+  transition: transform 0.3s ease;
+}
+
+.download-btn-modern:hover .download-arrow {
+  transform: translateX(5px);
+}
+
+/* Download Info */
+.download-info {
+  margin-top: 2rem;
+  animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+
+.version-info {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1rem;
+  letter-spacing: 0.3px;
+}
+
+.feature-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.chip-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.chip-modern:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.chip-modern .v-icon {
+  font-size: 16px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .download-section {
+    padding: 3rem 0;
+  }
+  
+  .download-card {
+    padding: 2rem 1.5rem !important;
+    margin: 0 1rem;
+    border-radius: 30px !important;
+  }
+  
+  .download-title {
+    font-size: 1.5rem;
+  }
+  
+  .download-subtitle {
+    font-size: 0.875rem;
+    padding: 0 0.5rem;
+  }
+  
+  .download-btn-modern {
+    padding: 10px 24px !important;
+    font-size: 1rem !important;
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .feature-chips {
+    gap: 0.5rem;
+  }
+  
+  .chip-modern {
+    padding: 4px 12px;
+    font-size: 0.7rem;
+  }
+  
+  .chip-modern span {
+    display: none;
+  }
+  
+  .chip-modern .v-icon {
+    margin: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .download-card {
+    padding: 1.5rem 1rem !important;
+  }
+  
+  .download-title {
+    font-size: 1.25rem;
+  }
+  
+  .version-info {
+    font-size: 0.75rem;
+  }
+  
+  .android-icon {
+    font-size: 60px !important;
+  }
+  
+  .android-pulse {
+    width: 80px;
+    height: 80px;
+  }
+  
+  @keyframes pulseRing {
+    0% {
+      width: 50px;
+      height: 50px;
+      opacity: 0.8;
+    }
+    100% {
+      width: 100px;
+      height: 100px;
+      opacity: 0;
+    }
+  }
+}
+
+/* Loading State */
+.download-btn-modern:disabled {
+  opacity: 0.7;
+  transform: none;
+}
+
+/* ============ RIDER SECTION STYLES ============ */
+
+.rider-section {
+  position: relative;
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  overflow: hidden;
+}
+
+/* Animated Background Effects */
+.rider-bg-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.rider-glow-1 {
+  position: absolute;
+  top: -30%;
+  right: -20%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(63, 131, 199, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: riderFloat 20s ease-in-out infinite;
+}
+
+.rider-glow-2 {
+  position: absolute;
+  bottom: -30%;
+  left: -20%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: riderFloat 15s ease-in-out infinite reverse;
+}
+
+@keyframes riderFloat {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* Rider Content */
+.rider-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Title */
+.rider-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: white;
+  letter-spacing: -0.02em;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.title-gradient {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  display: inline-block;
+}
+
+.title-gradient::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #60a5fa, #3b82f6, transparent);
+  border-radius: 3px;
+  animation: titleLineGlow 2s ease-in-out infinite;
+}
+
+@keyframes titleLineGlow {
+  0%, 100% {
+    width: 40%;
+    opacity: 0.5;
+  }
+  50% {
+    width: 80%;
+    opacity: 1;
+  }
+}
+
+/* Subtitle */
+.rider-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 600px;
+  margin: 0 auto 2.5rem auto;
+  line-height: 1.6;
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+/* CTA Button */
+.rider-cta-btn {
+  background: linear-gradient(135deg, #3f83c7 0%, #2563eb 100%) !important;
+  color: white !important;
+  padding: 12px 40px !important;
+  font-size: 1.125rem !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  border-radius: 50px !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3) !important;
+  transition: all 0.3s ease !important;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+  position: relative;
+  overflow: hidden;
+}
+
+.rider-cta-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.rider-cta-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.rider-cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.4) !important;
+}
+
+.rider-cta-btn:active {
+  transform: translateY(0);
+}
+
+.rider-cta-btn .v-icon {
+  transition: transform 0.3s ease;
+}
+
+.rider-cta-btn:hover .v-icon {
+  transform: translateX(3px);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .rider-section {
+    padding: 3rem 0;
+  }
+  
+  .rider-title {
+    margin-bottom: 1rem;
+  }
+  
+  .rider-subtitle {
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+  }
+  
+  .rider-cta-btn {
+    padding: 10px 32px !important;
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .rider-title {
+    font-size: 1.75rem;
+  }
+  
+  .rider-subtitle {
+    font-size: 0.875rem;
+  }
+  
+  .rider-cta-btn {
+    padding: 8px 28px !important;
+    font-size: 0.9375rem !important;
+    width: 90%;
+  }
+}
+
+/* Hover effect for the whole section */
+.rider-section:hover .rider-glow-1 {
+  animation-duration: 15s;
+}
+
+.rider-section:hover .rider-glow-2 {
+  animation-duration: 10s;
+}
+
+/* ============ HELP SECTION STYLES ============ */
+
+.help-section {
+  position: relative;
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  overflow: hidden;
+}
+
+/* Animated Background */
+.help-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.help-blob-1 {
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(63, 131, 199, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatBlob 20s ease-in-out infinite;
+}
+
+.help-blob-2 {
+  position: absolute;
+  bottom: -20%;
+  left: -10%;
+  width: 50%;
+  height: 50%;
+  background: radial-gradient(circle, rgba(107, 161, 212, 0.06) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatBlob 15s ease-in-out infinite reverse;
+}
+
+.help-blob-3 {
+  position: absolute;
+  top: 40%;
+  left: 30%;
+  width: 40%;
+  height: 40%;
+  background: radial-gradient(circle, rgba(63, 131, 199, 0.04) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatBlob 25s ease-in-out infinite;
+}
+
+@keyframes floatBlob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* Help Content */
+.help-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Section Badge */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(63, 131, 199, 0.2);
+}
+
+.section-badge span {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: 0.5px;
+}
+
+/* Title */
+.help-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.title-gradient {
+  background: linear-gradient(135deg, #3f83c7 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtitle */
+.help-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  color: #475569;
+  max-width: 600px;
+  margin: 0 auto 3rem auto;
+  line-height: 1.6;
+}
+
+/* Contact Cards Container */
+.contact-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+/* Modern Contact Card */
+.contact-card-modern {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+  max-width: 320px;
+  background: white;
+  border-radius: 24px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.contact-card-modern:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(63, 131, 199, 0.15);
+}
+
+/* Card Glow Effect */
+.card-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3f83c7, #60a5fa, #3f83c7);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.contact-card-modern:hover .card-glow {
+  transform: scaleX(1);
+}
+
+/* Card Icon */
+.card-icon-wrapper {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, rgba(63, 131, 199, 0.1), rgba(96, 165, 250, 0.1));
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+  transition: all 0.3s ease;
+}
+
+.contact-card-modern:hover .card-icon-wrapper {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, rgba(63, 131, 199, 0.2), rgba(96, 165, 250, 0.2));
+}
+
+/* Card Title */
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+/* Card Description */
+.card-description {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+/* Contact Info Wrapper */
+.contact-info-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.contact-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.contact-link:hover {
+  color: #3f83c7;
+}
+
+.availability {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #10b981;
+}
+
+/* Card Action Buttons */
+.card-action {
+  margin-top: 0.5rem;
+}
+
+.call-btn,
+.email-btn,
+.chat-btn {
+  background: linear-gradient(135deg, #3f83c7 0%, #2563eb 100%) !important;
+  color: white !important;
+  text-transform: none !important;
+  padding: 8px 20px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(63, 131, 199, 0.3);
+}
+
+.call-btn:hover,
+.email-btn:hover,
+.chat-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(63, 131, 199, 0.4);
+}
+
+/* Specific card hover effects */
+.phone-card:hover {
+  border: 1px solid rgba(63, 131, 199, 0.3);
+}
+
+.email-card:hover {
+  border: 1px solid rgba(63, 131, 199, 0.3);
+}
+
+.chat-card:hover {
+  border: 1px solid rgba(63, 131, 199, 0.3);
+}
+
+/* Support Info */
+.support-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(63, 131, 199, 0.1);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.info-divider {
+  width: 1px;
+  height: 30px;
+  background: rgba(63, 131, 199, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .help-section {
+    padding: 3rem 0;
+  }
+  
+  .contact-container {
+    gap: 1rem;
+  }
+  
+  .contact-card-modern {
+    min-width: 280px;
+    padding: 1.5rem;
+  }
+  
+  .support-info {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .info-divider {
+    width: 50px;
+    height: 1px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .contact-card-modern {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .help-subtitle {
+    padding: 0 1rem;
+  }
+  
+  .info-item {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-badge {
+    margin-bottom: 1rem;
+  }
+  
+  .help-title {
+    font-size: 1.75rem;
+  }
+  
+  .contact-card-modern {
+    padding: 1.25rem;
+  }
+  
+  .card-icon-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .contact-link {
+    font-size: 0.75rem;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.help-content {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.contact-card-modern {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.contact-card-modern:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.contact-card-modern:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.contact-card-modern:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
 /* Footer */
-.responsive-footer-title {
-  font-size: clamp(1.25rem, 4vw, 1.5rem) !important;
-  line-height: var(--lh-tight);
+/* ============ MODERN FOOTER STYLES ============ */
+
+.modern-footer {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
+  position: relative;
+  overflow: hidden;
+  padding: 3rem 0 1.5rem 0 !important;
+  margin-top: auto;
 }
 
-.responsive-footer-text {
-  font-size: var(--fluid-sm) !important;
-  line-height: var(--lh-normal);
-  word-break: break-word !important;
-  overflow-wrap: break-word !important;
-  white-space: normal !important;
+/* Animated Background Effect */
+.modern-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(63, 131, 199, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(107, 161, 212, 0.05) 0%, transparent 50%);
+  pointer-events: none;
 }
 
-.responsive-footer-contact {
-  font-size: var(--fluid-xs) !important;
-  line-height: var(--lh-tight);
-  word-break: break-word !important;
-  overflow-wrap: break-word !important;
-  white-space: normal !important;
+.modern-footer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(63, 131, 199, 0.5), rgba(107, 161, 212, 0.5), rgba(63, 131, 199, 0.5), transparent);
 }
 
-.responsive-footer-logo {
-  max-height: clamp(30px, 8vw, 40px) !important;
-  max-width: clamp(30px, 8vw, 40px) !important;
+/* Footer Content */
+.footer-content {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.responsive-footer-icon {
-  width: clamp(36px, 10vw, 40px) !important;
-  height: clamp(36px, 10vw, 40px) !important;
+/* Brand Section */
+.footer-brand {
+  margin-bottom: 1rem;
+}
+
+.footer-logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 960px) {
+  .footer-logo-wrapper {
+    justify-content: flex-start;
+  }
+}
+
+.footer-logo {
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.footer-logo-wrapper:hover .footer-logo {
+  transform: scale(1.05) rotate(5deg);
+}
+
+.footer-brand-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.brand-accent {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.footer-tagline {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0.5rem 0 0 0;
+  line-height: 1.5;
+}
+
+.copyright-text {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 1rem;
+}
+
+/* Social Section */
+.footer-social {
+  margin-bottom: 1rem;
+}
+
+.social-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.social-icons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+@media (min-width: 960px) {
+  .social-icons {
+    justify-content: flex-end;
+  }
+}
+
+.social-icon-btn {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease !important;
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.social-icon-btn:hover {
+  transform: translateY(-3px);
+  background: rgba(63, 131, 199, 0.3) !important;
+  border-color: rgba(63, 131, 199, 0.5);
+}
+
+.social-icon-btn .v-icon {
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.social-icon-btn:hover .v-icon {
+  transform: scale(1.1);
+}
+
+/* Social Tooltip */
+.social-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.social-icon-btn:hover .social-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-12px);
+}
+
+/* Footer Credit */
+.footer-credit {
+  margin-top: 1rem;
+}
+
+.credit-text {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.heart {
+  display: inline-block;
+  animation: heartbeat 1.5s ease infinite;
+  color: #ef4444;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  position: relative;
+  z-index: 1;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  text-align: center;
+}
+
+.bottom-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.bottom-link {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.bottom-link:hover {
+  color: #60a5fa;
+  transform: translateY(-1px);
+}
+
+.link-divider {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.7rem;
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .modern-footer {
+    padding: 2rem 0 1rem 0 !important;
+  }
+  
+  .footer-content {
+    padding-bottom: 1.5rem;
+  }
+  
+  .footer-brand {
+    margin-bottom: 1.5rem;
+  }
+  
+  .footer-social {
+    margin-bottom: 1.5rem;
+  }
+  
+  .copyright-text {
+    text-align: center;
+  }
+  
+  .credit-text {
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-brand-name {
+    font-size: 1.25rem;
+  }
+  
+  .social-icons {
+    gap: 0.5rem;
+  }
+  
+  .social-icon-btn {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  
+  .bottom-links {
+    gap: 0.3rem;
+  }
+  
+  .bottom-link {
+    font-size: 0.7rem;
+  }
+  
+  .footer-tagline {
+    font-size: 0.75rem;
+  }
+}
+
+/* Animation for footer on load */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modern-footer {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Hover effects for links */
+.footer-brand-name,
+.bottom-link,
+.social-icon-btn {
+  cursor: pointer;
+}
+
+/* Optional: Add wave decoration at top of footer */
+.modern-footer .footer-wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.modern-footer .footer-wave svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 40px;
 }
 
 /* Dialog */
@@ -1839,84 +3725,667 @@ onMounted(() => {
 
 /* ============ EXISTING STYLES WITH MOBILE ENHANCEMENTS ============ */
 
-/* Hero Section */
-.hero-section {
-  min-height: 90vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e4edf7 100%);
+/* ============ MODERN NAVIGATION BAR STYLES ============ */
+
+/* Main Navbar Container */
+.modern-navbar {
+  background: linear-gradient(135deg, #2f507b 0%, #1b334a 25%, #101c29 50%, #0c1b2b 75%, #1e3a5f 100%) !important;
+  background-size: 300% 300% !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease !important;
+  animation: gradientShift 8s ease infinite;
+}
+
+/* Animated Gradient Shift */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Alternative: Static Gradient (if you don't want animation) */
+.modern-navbar.static-gradient {
+  background: linear-gradient(135deg, #1e3a5f 0%, #203a55 50%, rgb(22, 63, 100) 100%) !important;
+  background-size: 100% 100% !important;
+  animation: none;
+}
+
+/* Navbar Scroll Effect */
+.modern-navbar.navbar-scrolled {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+/* Logo Styling */
+.nav-logo {
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.nav-logo:hover {
+  transform: scale(1.05) rotate(5deg);
+}
+
+/* App Title */
+.app-title {
+  font-size: clamp(1.25rem, 4vw, 1.5rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.3px;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Desktop Navigation Container */
+.desktop-nav {
   display: flex;
   align-items: center;
+  gap: 0.25rem;
+  margin-right: 0.5rem;
+}
+
+/* Desktop Navigation Buttons */
+.desktop-nav-btn {
   position: relative;
+  min-width: auto !important;
+  width: auto !important;
+  padding: 8px 18px !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  text-transform: none !important;
+  opacity: 0.85;
+  transition: all 0.3s ease !important;
+  border-radius: 40px !important;
   overflow: hidden;
 }
 
-.hero-section::before {
+/* Hover Background Effect */
+.desktop-nav-btn::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(63, 131, 199, 0.05) 50%,
-    transparent 70%
-  );
-  animation: shimmer 3s infinite;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 40px;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
 }
 
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+.desktop-nav-btn:hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
-.hero-card {
-  background: #3f83c7 !important;
-  backdrop-filter: blur(10px);
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow:
-    0 20px 60px rgba(63, 131, 199, 0.25) !important,
-    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+.desktop-nav-btn:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+/* Navigation Text */
+.desktop-nav-btn .nav-text {
   position: relative;
   z-index: 1;
-  color: white !important;
+  font-size: inherit;
+  font-weight: 600;
 }
 
-.hero-card .gradient-text {
-  background: linear-gradient(to right, #ffffff, #e6f2ff) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
+/* Navigation Indicator Line */
+.nav-indicator {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, white, transparent);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+  z-index: 1;
 }
 
-.hero-card .text-grey-darken-2 {
-  color: rgba(255, 255, 255, 0.9) !important;
+.desktop-nav-btn:hover .nav-indicator {
+  width: 60%;
 }
 
-.hero-card .v-chip {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  color: white !important;
+/* Active State (add class 'active' to current section button) */
+.desktop-nav-btn.active {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15) !important;
 }
 
-.logo-pulse {
+.desktop-nav-btn.active .nav-indicator {
+  width: 60%;
+}
+
+/* Mobile Navigation Icon */
+.nav-icon {
+  transition: all 0.3s ease !important;
+  border-radius: 8px;
+}
+
+.nav-icon:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Breakpoints */
+@media (min-width: 960px) and (max-width: 1200px) {
+  .desktop-nav {
+    gap: 0.1rem;
+    margin-right: 0.25rem;
+  }
+
+  .desktop-nav-btn {
+    padding: 6px 12px !important;
+    font-size: 0.8125rem !important;
+  }
+
+  .nav-indicator {
+    bottom: 3px;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1400px) {
+  .desktop-nav-btn {
+    padding: 8px 16px !important;
+    font-size: 0.875rem !important;
+  }
+}
+
+@media (min-width: 1400px) {
+  .desktop-nav {
+    gap: 0.5rem;
+  }
+
+  .desktop-nav-btn {
+    padding: 10px 22px !important;
+    font-size: 0.9375rem !important;
+  }
+}
+
+@media (max-width: 959px) {
+  .desktop-nav {
+    display: none;
+  }
+}
+
+@media (min-width: 960px) {
+  .desktop-nav-btn {
+    position: relative;
+  }
+}
+
+/* Hero Section */
+.hero-section {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+}
+
+/* Animated Background */
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.hero-blob-1 {
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(63, 131, 199, 0.15) 0%, rgba(63, 131, 199, 0) 70%);
+  border-radius: 50%;
+  animation: float 20s ease-in-out infinite;
+}
+
+.hero-blob-2 {
+  position: absolute;
+  bottom: -20%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(107, 161, 212, 0.1) 0%, rgba(107, 161, 212, 0) 70%);
+  border-radius: 50%;
+  animation: float 15s ease-in-out infinite reverse;
+}
+
+.hero-blob-3 {
+  position: absolute;
+  top: 40%;
+  left: 20%;
+  width: 40%;
+  height: 40%;
+  background: radial-gradient(circle, rgba(63, 131, 199, 0.08) 0%, rgba(63, 131, 199, 0) 70%);
+  border-radius: 50%;
+  animation: float 25s ease-in-out infinite;
+}
+
+.hero-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(30px, -30px) rotate(5deg);
+  }
+  66% {
+    transform: translate(-20px, 20px) rotate(-3deg);
+  }
+}
+
+@keyframes gridMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+/* Hero Content */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+}
+
+/* Badge */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideDown 0.6s ease-out;
+}
+
+.badge-pulse {
+  width: 8px;
+  height: 8px;
+  background: #4ade80;
+  border-radius: 50%;
   animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-  0% {
+  0%, 100% {
+    opacity: 1;
     transform: scale(1);
   }
   50% {
-    transform: scale(1.05);
+    opacity: 0.5;
+    transform: scale(1.2);
   }
-  100% {
-    transform: scale(1);
+}
+
+.badge-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  letter-spacing: 0.3px;
+}
+
+/* Logo */
+.logo-wrapper {
+  margin-bottom: 1.5rem;
+  animation: fadeInUp 0.8s ease-out 0.1s both;
+}
+
+.hero-logo {
+  max-width: 100px;
+  margin: 0 auto;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.2));
+}
+
+/* Title */
+.hero-title {
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.title-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.title-gradient-light {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtitle */
+.hero-subtitle {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+  line-height: 1.6;
+  font-weight: 400;
+  animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+/* Feature Highlights - Force horizontal layout */
+.feature-highlights {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 1.5rem !important;
+  margin-bottom: 2.5rem !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+}
+
+.highlight-item {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.highlight-icon {
+  width: 32px !important;
+  height: 32px !important;
+  background: rgba(63, 131, 199, 0.2) !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  backdrop-filter: blur(5px) !important;
+  flex-shrink: 0 !important;
+}
+
+.highlight-icon .v-icon {
+  color: #60a5fa !important;
+  font-size: 20px !important;
+}
+
+.highlight-divider {
+  width: 1px !important;
+  height: 30px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  flex-shrink: 0 !important;
+}
+
+/* Small screens - reduce gap and font size but keep horizontal */
+@media (max-width: 768px) {
+  .feature-highlights {
+    gap: 0.75rem !important;
+  }
+  
+  .highlight-item span {
+    font-size: 0.7rem !important;
+  }
+  
+  .highlight-icon {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  
+  .highlight-icon .v-icon {
+    font-size: 16px !important;
+  }
+  
+  .highlight-divider {
+    height: 20px !important;
+  }
+}
+
+/* Extra small screens - keep horizontal, just smaller */
+@media (max-width: 480px) {
+  .feature-highlights {
+    gap: 0.5rem !important;
+    justify-content: center !important;
+  }
+  
+  .highlight-item span {
+    font-size: 0.6rem !important;
+  }
+  
+  .highlight-icon {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  
+  .highlight-icon .v-icon {
+    font-size: 14px !important;
+  }
+}
+
+/* Smallest screens - icons only but still horizontal */
+@media (max-width: 380px) {
+  .feature-highlights {
+    gap: 0.75rem !important;
+  }
+  
+  .highlight-item span {
+    display: none !important;
+  }
+  
+  .highlight-icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .highlight-icon .v-icon {
+    font-size: 18px !important;
+  }
+}
+
+/* CTA Buttons */
+.cta-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  animation: fadeInUp 0.8s ease-out 0.5s both;
+}
+
+.download-btn-primary {
+  background: linear-gradient(135deg, #3f83c7 0%, #2563eb 100%) !important;
+  color: white !important;
+  padding: 12px 32px !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  text-transform: none !important;
+  border: none !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.download-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.4) !important;
+}
+
+.learn-more-btn {
+  color: white !important;
+  padding: 12px 24px !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  text-transform: none !important;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.learn-more-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+/* Trust Indicators */
+.trust-indicators {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+.trust-item {
+  text-align: center;
+}
+
+.trust-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.trust-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.trust-divider {
+  width: 1px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-content {
+    padding: 1rem;
+  }
+
+  .hero-badge {
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-highlights {
+    gap: 1rem;
+  }
+
+  .highlight-item span {
+    display: none;
+  }
+
+  .highlight-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .trust-indicators {
+    gap: 1rem;
+  }
+
+  .trust-number {
+    font-size: 1.25rem;
+  }
+
+  .cta-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .download-btn-primary,
+  .learn-more-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .highlight-divider,
+  .trust-divider {
+    display: none;
+  }
+
+  .feature-highlights,
+  .trust-indicators {
+    flex-direction: column;
+    gap: 0.75rem;
   }
 }
 
@@ -2710,6 +5179,76 @@ h6 {
   .responsive-nav-description {
     font-size: 12pt !important;
     line-height: 1.6 !important;
+  }
+}
+
+/* Desktop Navigation - Clean and Compact */
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.desktop-nav-btn {
+  min-width: auto !important;
+  width: auto !important;
+  padding: 6px 10px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  text-transform: none !important;
+  opacity: 0.95;
+  transition: all 0.2s ease;
+}
+
+.desktop-nav-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-1px);
+}
+
+.desktop-nav-btn .nav-text {
+  font-size: inherit;
+  font-weight: 500;
+}
+
+/* Medium desktops (960px - 1200px) */
+@media (min-width: 960px) and (max-width: 1200px) {
+  .desktop-nav {
+    gap: 0.1rem;
+  }
+
+  .desktop-nav-btn {
+    padding: 6px 6px !important;
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Large desktops (1200px - 1400px) */
+@media (min-width: 1200px) and (max-width: 1400px) {
+  .desktop-nav-btn {
+    padding: 6px 10px !important;
+    font-size: 0.8125rem !important;
+  }
+}
+
+/* Extra large desktops (1400px+) */
+@media (min-width: 1400px) {
+  .desktop-nav {
+    gap: 0.5rem;
+  }
+
+  .desktop-nav-btn {
+    padding: 8px 16px !important;
+    font-size: 0.9375rem !important;
+  }
+}
+
+/* Hide desktop nav on tablets and below */
+@media (max-width: 959px) {
+  .desktop-nav {
+    display: none;
   }
 }
 </style>
