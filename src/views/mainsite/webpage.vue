@@ -1,8 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+
+const router = useRouter()
 
 const drawer = ref(false)
-const activeTab = ref('home')
 const downloadDialog = ref(false)
 const isLoading = ref(false)
 const downloadSuccess = ref(false)
@@ -38,7 +41,6 @@ const colorPalette = {
 
 // Using local images with correct paths
 const logoUrl = ref('/logo.png')
-const heroImage = ref('https://picsum.photos/800/400?random=2&blur=1')
 const apkUrl = ref('/closeshop.apk')
 const isMobileDevice = ref(false)
 
@@ -149,12 +151,6 @@ const navItems = [
   { title: 'CONTACT US', value: 'help', icon: 'mdi-headset' },
 ]
 
-const appInfo = ref({
-  Developer: 'Charles Q. Neri, Queen Zayvy P. Israel, Nel O. Ochate',
-  Size: '12.7 MB',
-  Requires: 'Android 8.0 or higher',
-  'Last Updated': 'December 2025',
-})
 
 const footerLinks = ref([
   { text: 'GitHub', icon: 'mdi-github', href: 'https://github.com' },
@@ -358,13 +354,13 @@ const handleScroll = () => {
 const updateActiveNav = () => {
   const sections = ['home', 'about', 'guide', 'download-section', 'rider-application', 'help']
   const scrollPosition = window.scrollY + 100
-  
+
   for (const section of sections) {
     const element = document.getElementById(section)
     if (element) {
       const offsetTop = element.offsetTop
       const offsetBottom = offsetTop + element.offsetHeight
-      
+
       if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
         document.querySelectorAll('.desktop-nav-btn').forEach(btn => {
           btn.classList.remove('active')
@@ -382,12 +378,17 @@ const updateActiveNav = () => {
 const startLiveChat = () => {
   // Example: Open a chat widget or show a message
   alert('Live chat feature coming soon! For now, please call or email us.')
-  
+
   // You can integrate with services like:
   // - Crisp.chat
   // - Intercom
   // - Tawk.to
   // - Facebook Messenger
+}
+
+const applyRider = () => {
+  // Navigate to rider portal route
+  router.push('/rider-portal')
 }
 
 onMounted(() => {
@@ -400,7 +401,7 @@ onMounted(() => {
   isMobileDevice.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent,
   )
-  
+
   // Set data-section attributes on nav buttons
   const navButtons = document.querySelectorAll('.desktop-nav-btn')
   const sections = ['home', 'about', 'guide', 'download-section', 'rider-application', 'help']
@@ -598,7 +599,7 @@ onMounted(() => {
           <div class="about-blob-1"></div>
           <div class="about-blob-2"></div>
         </div>
-        
+
         <v-container>
           <v-row>
             <v-col cols="12" class="text-center mb-12">
@@ -623,7 +624,7 @@ onMounted(() => {
                   </div>
                   <h3 class="card-title-modern">Key Features</h3>
                 </div>
-                
+
                 <div class="features-grid">
                   <div class="feature-item-modern">
                     <div class="feature-icon-modern">
@@ -631,35 +632,35 @@ onMounted(() => {
                     </div>
                     <span>Developed by Caraga State University students</span>
                   </div>
-                  
+
                   <div class="feature-item-modern">
                     <div class="feature-icon-modern">
                       <v-icon size="22" color="#3f83c7">mdi-chart-line</v-icon>
                     </div>
                     <span>Helps business owners grow online visibility</span>
                   </div>
-                  
+
                   <div class="feature-item-modern">
                     <div class="feature-icon-modern">
                       <v-icon size="22" color="#3f83c7">mdi-cart</v-icon>
                     </div>
                     <span>Improves shopping experience for consumers</span>
                   </div>
-                  
+
                   <div class="feature-item-modern">
                     <div class="feature-icon-modern">
                       <v-icon size="22" color="#3f83c7">mdi-account-group</v-icon>
                     </div>
                     <span>Easy-to-use interface for all users</span>
                   </div>
-                  
+
                   <div class="feature-item-modern">
                     <div class="feature-icon-modern">
                       <v-icon size="22" color="#3f83c7">mdi-map-marker</v-icon>
                     </div>
                     <span>Display shop on the map for better visibility and connectivity</span>
                   </div>
-                  
+
                   <div class="feature-item-modern">
                     <div class="feature-icon-modern">
                       <v-icon size="22" color="#3f83c7">mdi-handshake</v-icon>
@@ -679,7 +680,7 @@ onMounted(() => {
                   </div>
                   <h3 class="card-title-modern">App Details</h3>
                 </div>
-                
+
                 <div class="info-items">
                   <div class="info-row-modern">
                     <div class="info-label">
@@ -688,7 +689,7 @@ onMounted(() => {
                     </div>
                     <div class="info-value">Charles Q. Neri, Queen Zayvy P. Israel, Nel O. Ochate</div>
                   </div>
-                  
+
                   <div class="info-row-modern">
                     <div class="info-label">
                       <v-icon size="18" color="#3f83c7">mdi-database</v-icon>
@@ -696,7 +697,7 @@ onMounted(() => {
                     </div>
                     <div class="info-value">12.7 MB</div>
                   </div>
-                  
+
                   <div class="info-row-modern">
                     <div class="info-label">
                       <v-icon size="18" color="#3f83c7">mdi-android</v-icon>
@@ -704,7 +705,7 @@ onMounted(() => {
                     </div>
                     <div class="info-value">Android 8.0 or higher</div>
                   </div>
-                  
+
                   <div class="info-row-modern">
                     <div class="info-label">
                       <v-icon size="18" color="#3f83c7">mdi-calendar</v-icon>
@@ -742,7 +743,7 @@ onMounted(() => {
                   </div>
                   <h3 class="card-title">Create Account</h3>
                 </div>
-                
+
                 <div class="steps-preview">
                   <div class="step-indicator">
                     <div class="step-dot" :class="{ active: accountCreationStep >= 1 }">1</div>
@@ -751,7 +752,7 @@ onMounted(() => {
                     <div class="step-line" :class="{ active: accountCreationStep >= 3 }"></div>
                     <div class="step-dot" :class="{ active: accountCreationStep >= 3 }">3</div>
                   </div>
-                  
+
                   <div class="step-image" @click="openImageViewer(accountCreationImages[accountCreationStep - 1])">
                     <v-img
                       :src="accountCreationImages[accountCreationStep - 1].src"
@@ -770,10 +771,10 @@ onMounted(() => {
                       <v-icon size="20" color="white">mdi-magnify-plus</v-icon>
                     </div>
                   </div>
-                  
+
                   <p class="step-description">{{ accountCreationImages[accountCreationStep - 1].description }}</p>
                 </div>
-                
+
                 <div class="card-actions">
                   <v-btn
                     class="nav-btn-prev"
@@ -797,7 +798,7 @@ onMounted(() => {
                     <v-icon right>mdi-chevron-right</v-icon>
                   </v-btn>
                 </div>
-                
+
                 <div class="card-footer">
                   <v-btn
                     class="restart-btn"
@@ -822,7 +823,7 @@ onMounted(() => {
                   </div>
                   <h3 class="card-title">Create Shop</h3>
                 </div>
-                
+
                 <div class="steps-preview">
                   <div class="step-indicator">
                     <div class="step-dot" :class="{ active: shopCreationStep >= 1 }">1</div>
@@ -831,7 +832,7 @@ onMounted(() => {
                     <div class="step-line" :class="{ active: shopCreationStep >= 3 }"></div>
                     <div class="step-dot" :class="{ active: shopCreationStep >= 3 }">3</div>
                   </div>
-                  
+
                   <div class="step-image" @click="openImageViewer(shopGuideImages[shopCreationStep - 1])">
                     <v-img
                       :src="shopGuideImages[shopCreationStep - 1].src"
@@ -850,10 +851,10 @@ onMounted(() => {
                       <v-icon size="20" color="white">mdi-magnify-plus</v-icon>
                     </div>
                   </div>
-                  
+
                   <p class="step-description">{{ shopGuideImages[shopCreationStep - 1].description }}</p>
                 </div>
-                
+
                 <div class="card-actions">
                   <v-btn
                     class="nav-btn-prev"
@@ -877,7 +878,7 @@ onMounted(() => {
                     <v-icon right>mdi-chevron-right</v-icon>
                   </v-btn>
                 </div>
-                
+
                 <div class="card-footer">
                   <v-btn
                     class="restart-btn"
@@ -902,7 +903,7 @@ onMounted(() => {
                   </div>
                   <h3 class="card-title">App Navigation</h3>
                 </div>
-                
+
                 <div class="navigation-grid">
                   <div
                     v-for="image in navigationImages.slice(0, 4)"
@@ -926,7 +927,7 @@ onMounted(() => {
                     <span class="thumbnail-label">{{ image.title }}</span>
                   </div>
                 </div>
-                
+
                 <div class="view-all-btn">
                   <v-btn
                     class="view-all-link"
@@ -952,7 +953,7 @@ onMounted(() => {
           <div class="download-particle-2"></div>
           <div class="download-particle-3"></div>
         </div>
-        
+
         <v-container>
           <v-row align="center" justify="center">
             <v-col cols="12" md="10" lg="8" class="text-center">
@@ -1015,7 +1016,7 @@ onMounted(() => {
                 <div class="rider-glow-1"></div>
                 <div class="rider-glow-2"></div>
               </div>
-              
+
               <v-container>
                 <v-row align="center" justify="center">
                   <v-col cols="12" md="10" lg="8" class="text-center">
@@ -1046,7 +1047,7 @@ onMounted(() => {
           <div class="help-blob-2"></div>
           <div class="help-blob-3"></div>
         </div>
-        
+
         <v-container>
           <v-row align="center" justify="center">
             <v-col cols="12" md="10" lg="8" class="text-center">
@@ -1061,11 +1062,11 @@ onMounted(() => {
                 <h2 class="help-title">
                   Need Assistance?
                 </h2>
-                
+
                 <!-- Subtitle -->
                 <p class="help-subtitle">
-                  Our support team is here to help you with any questions or issues you may have. 
-                  Feel free to reach out to us through the following contact information, 
+                  Our support team is here to help you with any questions or issues you may have.
+                  Feel free to reach out to us through the following contact information,
                   and we'll get back to you as soon as possible.
                 </p>
 
@@ -1155,7 +1156,7 @@ onMounted(() => {
         </v-container>
       </section>
     </v-main>
-    
+
     <!-- Footer -->
     <v-footer class="modern-footer mt-auto">
       <v-container>
@@ -1207,7 +1208,7 @@ onMounted(() => {
             </div>
           </v-col>
         </v-row>
-        
+
         <!-- Bottom Bar -->
         <div class="footer-bottom">
           <div class="bottom-links">
@@ -1880,20 +1881,20 @@ onMounted(() => {
   .about-section {
     padding: 3rem 0;
   }
-  
+
   .feature-card,
   .info-card-modern {
     padding: 1.5rem;
   }
-  
+
   .card-title-modern {
     font-size: 1.25rem;
   }
-  
+
   .feature-item-modern span {
     font-size: 0.875rem;
   }
-  
+
   .info-value {
     font-size: 0.875rem;
   }
@@ -1904,46 +1905,46 @@ onMounted(() => {
   .info-card-modern {
     padding: 1.25rem;
   }
-  
+
   .card-header-modern {
     margin-bottom: 1.25rem;
   }
-  
+
   .header-icon {
     width: 40px;
     height: 40px;
   }
-  
+
   .header-icon .v-icon {
     font-size: 24px !important;
   }
-  
+
   .card-title-modern {
     font-size: 1.125rem;
   }
-  
+
   .feature-icon-modern {
     width: 32px;
     height: 32px;
   }
-  
+
   .feature-icon-modern .v-icon {
     font-size: 18px !important;
   }
-  
+
   .feature-item-modern span {
     font-size: 0.8125rem;
   }
-  
+
   .info-label {
     font-size: 0.7rem;
   }
-  
+
   .info-value {
     font-size: 0.8125rem;
     padding-left: 20px;
   }
-  
+
   .decoration-line {
     width: 30px;
   }
@@ -2322,11 +2323,11 @@ onMounted(() => {
   .guide-section {
     padding: 3rem 0;
   }
-  
+
   .guide-card-modern {
     margin-bottom: 1.5rem;
   }
-  
+
   .step-line {
     width: 30px;
   }
@@ -2336,17 +2337,17 @@ onMounted(() => {
   .step-line {
     width: 20px;
   }
-  
+
   .step-dot {
     width: 28px;
     height: 28px;
     font-size: 0.75rem;
   }
-  
+
   .card-title {
     font-size: 1.125rem;
   }
-  
+
   .navigation-grid {
     gap: 0.75rem;
   }
@@ -2632,42 +2633,42 @@ onMounted(() => {
   .download-section {
     padding: 3rem 0;
   }
-  
+
   .download-card {
     padding: 2rem 1.5rem !important;
     margin: 0 1rem;
     border-radius: 30px !important;
   }
-  
+
   .download-title {
     font-size: 1.5rem;
   }
-  
+
   .download-subtitle {
     font-size: 0.875rem;
     padding: 0 0.5rem;
   }
-  
+
   .download-btn-modern {
     padding: 10px 24px !important;
     font-size: 1rem !important;
     width: 100%;
     max-width: 280px;
   }
-  
+
   .feature-chips {
     gap: 0.5rem;
   }
-  
+
   .chip-modern {
     padding: 4px 12px;
     font-size: 0.7rem;
   }
-  
+
   .chip-modern span {
     display: none;
   }
-  
+
   .chip-modern .v-icon {
     margin: 0;
   }
@@ -2677,24 +2678,24 @@ onMounted(() => {
   .download-card {
     padding: 1.5rem 1rem !important;
   }
-  
+
   .download-title {
     font-size: 1.25rem;
   }
-  
+
   .version-info {
     font-size: 0.75rem;
   }
-  
+
   .android-icon {
     font-size: 60px !important;
   }
-  
+
   .android-pulse {
     width: 80px;
     height: 80px;
   }
-  
+
   @keyframes pulseRing {
     0% {
       width: 50px;
@@ -2895,16 +2896,16 @@ onMounted(() => {
   .rider-section {
     padding: 3rem 0;
   }
-  
+
   .rider-title {
     margin-bottom: 1rem;
   }
-  
+
   .rider-subtitle {
     margin-bottom: 2rem;
     padding: 0 1rem;
   }
-  
+
   .rider-cta-btn {
     padding: 10px 32px !important;
     font-size: 1rem !important;
@@ -2915,11 +2916,11 @@ onMounted(() => {
   .rider-title {
     font-size: 1.75rem;
   }
-  
+
   .rider-subtitle {
     font-size: 0.875rem;
   }
-  
+
   .rider-cta-btn {
     padding: 8px 28px !important;
     font-size: 0.9375rem !important;
@@ -3231,21 +3232,21 @@ onMounted(() => {
   .help-section {
     padding: 3rem 0;
   }
-  
+
   .contact-container {
     gap: 1rem;
   }
-  
+
   .contact-card-modern {
     min-width: 280px;
     padding: 1.5rem;
   }
-  
+
   .support-info {
     flex-direction: column;
     gap: 0.75rem;
   }
-  
+
   .info-divider {
     width: 50px;
     height: 1px;
@@ -3257,16 +3258,16 @@ onMounted(() => {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .contact-card-modern {
     width: 100%;
     max-width: 400px;
   }
-  
+
   .help-subtitle {
     padding: 0 1rem;
   }
-  
+
   .info-item {
     font-size: 0.75rem;
   }
@@ -3276,20 +3277,20 @@ onMounted(() => {
   .section-badge {
     margin-bottom: 1rem;
   }
-  
+
   .help-title {
     font-size: 1.75rem;
   }
-  
+
   .contact-card-modern {
     padding: 1.25rem;
   }
-  
+
   .card-icon-wrapper {
     width: 60px;
     height: 60px;
   }
-  
+
   .contact-link {
     font-size: 0.75rem;
   }
@@ -3347,7 +3348,7 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 50%, rgba(63, 131, 199, 0.08) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(107, 161, 212, 0.05) 0%, transparent 50%);
   pointer-events: none;
@@ -3572,23 +3573,23 @@ onMounted(() => {
   .modern-footer {
     padding: 2rem 0 1rem 0 !important;
   }
-  
+
   .footer-content {
     padding-bottom: 1.5rem;
   }
-  
+
   .footer-brand {
     margin-bottom: 1.5rem;
   }
-  
+
   .footer-social {
     margin-bottom: 1.5rem;
   }
-  
+
   .copyright-text {
     text-align: center;
   }
-  
+
   .credit-text {
     text-align: center;
   }
@@ -3598,24 +3599,24 @@ onMounted(() => {
   .footer-brand-name {
     font-size: 1.25rem;
   }
-  
+
   .social-icons {
     gap: 0.5rem;
   }
-  
+
   .social-icon-btn {
     width: 36px !important;
     height: 36px !important;
   }
-  
+
   .bottom-links {
     gap: 0.3rem;
   }
-  
+
   .bottom-link {
     font-size: 0.7rem;
   }
-  
+
   .footer-tagline {
     font-size: 0.75rem;
   }
@@ -4165,20 +4166,20 @@ onMounted(() => {
   .feature-highlights {
     gap: 0.75rem !important;
   }
-  
+
   .highlight-item span {
     font-size: 0.7rem !important;
   }
-  
+
   .highlight-icon {
     width: 28px !important;
     height: 28px !important;
   }
-  
+
   .highlight-icon .v-icon {
     font-size: 16px !important;
   }
-  
+
   .highlight-divider {
     height: 20px !important;
   }
@@ -4190,16 +4191,16 @@ onMounted(() => {
     gap: 0.5rem !important;
     justify-content: center !important;
   }
-  
+
   .highlight-item span {
     font-size: 0.6rem !important;
   }
-  
+
   .highlight-icon {
     width: 24px !important;
     height: 24px !important;
   }
-  
+
   .highlight-icon .v-icon {
     font-size: 14px !important;
   }
@@ -4210,16 +4211,16 @@ onMounted(() => {
   .feature-highlights {
     gap: 0.75rem !important;
   }
-  
+
   .highlight-item span {
     display: none !important;
   }
-  
+
   .highlight-icon {
     width: 32px !important;
     height: 32px !important;
   }
-  
+
   .highlight-icon .v-icon {
     font-size: 18px !important;
   }
