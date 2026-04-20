@@ -54,7 +54,7 @@ onMounted(async () => {
       // Update auth store
       await authStore.fetchUser()
 
-      // Redirect to application form after 1.5 seconds
+      // Redirect to application form
       setTimeout(() => {
         router.push('/application-form')
       }, 1500)
