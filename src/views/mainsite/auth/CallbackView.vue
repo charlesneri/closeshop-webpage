@@ -17,7 +17,7 @@ onMounted(async () => {
     if (sessionError) throw sessionError
 
     if (session?.user) {
-      status.value = 'Login successful! Redirecting...'
+      status.value = 'Login successful! Redirecting to application form...'
 
       // Check if user profile exists
       const { data: existingProfile } = await supabase
@@ -30,14 +30,18 @@ onMounted(async () => {
       if (!existingProfile) {
         status.value = 'Creating your account...'
 
+        const fullName = session.user.user_metadata?.full_name || ''
+        const firstName = fullName.split(' ')[0] || ''
+        const lastName = fullName.split(' ').slice(1).join(' ') || ''
+
         const { error: profileError } = await supabase
           .from('profiles')
           .insert([
             {
               id: session.user.id,
               email: session.user.email,
-              first_name: session.user.user_metadata?.full_name?.split(' ')[0] || '',
-              last_name: session.user.user_metadata?.full_name?.split(' ')[1] || '',
+              first_name: session.user.user_metadata?.first_name || firstName,
+              last_name: session.user.user_metadata?.last_name || lastName,
               avatar_url: session.user.user_metadata?.avatar_url || null
             }
           ])
@@ -64,7 +68,7 @@ onMounted(async () => {
 
     // Redirect to login after 3 seconds
     setTimeout(() => {
-      router.push('/login')
+      router.push('/rider-login')
     }, 3000)
   }
 })
@@ -99,7 +103,7 @@ onMounted(async () => {
                 <h3 class="text-h5 font-weight-bold mb-2">Authentication Failed</h3>
                 <p class="text-grey">{{ error }}</p>
                 <p class="text-caption">Redirecting to login page...</p>
-                <v-btn color="primary" @click="router.push('/login')" class="mt-4">
+                <v-btn color="primary" @click="router.push('/rider-login')" class="mt-4">
                   Go to Login
                 </v-btn>
               </div>

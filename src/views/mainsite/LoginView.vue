@@ -303,7 +303,7 @@ const handleLogin = async () => {
   }
 }
 
-// Handle Google Sign In
+// Handle Google Sign In - FIXED VERSION
 const handleGoogleSignIn = async () => {
   googleLoading.value = true
 
@@ -311,6 +311,7 @@ const handleGoogleSignIn = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
+        // Use the correct callback URL for your rider website
         redirectTo: `${window.location.origin}/auth/callback`,
         queryParams: {
           access_type: 'offline',
@@ -321,8 +322,7 @@ const handleGoogleSignIn = async () => {
 
     if (error) throw error
 
-    // The redirect will happen automatically to the callback page
-    // No need to show success message as page will redirect
+    // The redirect will happen automatically
   } catch (error) {
     console.error('Google sign in error:', error)
     snackbar.value = {
