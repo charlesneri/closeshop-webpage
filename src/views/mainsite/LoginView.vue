@@ -106,28 +106,6 @@
                 Continue with Google
               </v-btn>
 
-              <!-- Divider -->
-              <div class="divider my-6">
-                <v-divider></v-divider>
-                <span class="divider-text">New to CloseShop?</span>
-                <v-divider></v-divider>
-              </div>
-
-              <!-- Register Link -->
-              <div class="text-center">
-                <p class="mb-0 text-grey">
-                  Don't have an account?
-                  <v-btn
-                    variant="text"
-                    color="primary"
-                    class="register-link"
-                    @click="goToRegister"
-                  >
-                    Create an account
-                  </v-btn>
-                </p>
-              </div>
-
               <!-- Info Alert -->
               <v-alert
                 type="info"
@@ -206,13 +184,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { supabase } from '@/utils/supabase'
-import { useAuthUserStore } from '@/stores/authUser'
+  import { ref } from 'vue'
+  import { useRoute, useRouter } from 'vue-router'
+  import { supabase } from '@/utils/supabase'
+  import { useAuthUserStore } from '@/stores/authUser'
+  import { getSafeInternalPath } from '@/utils/riderAccess'
 
-const router = useRouter()
-const authStore = useAuthUserStore()
+  const router = useRouter()
+  const route = useRoute()
+  const authStore = useAuthUserStore()
 
 // Form references
 const loginFormRef = ref(null)
@@ -260,6 +240,10 @@ const rules = {
   }
 }
 
+const getPostAuthRedirect = () => (
+  getSafeInternalPath(route.query.redirect, '/application-form')
+)
+
 // Handle Login
 const handleLogin = async () => {
   if (!loginValid.value) return
@@ -280,14 +264,14 @@ const handleLogin = async () => {
 
       snackbar.value = {
         show: true,
-        text: 'Login successful! Redirecting to application form...',
+        text: 'Login successful! Redirecting you now...',
         color: 'success',
         icon: 'mdi-check-circle'
       }
 
-      // Redirect to application form after successful login
+      // Return the rider to the route they originally tried to access.
       setTimeout(() => {
-        router.push('/application-form')
+        router.push(getPostAuthRedirect())
       }, 1500)
     }
   } catch (error) {
@@ -310,7 +294,7 @@ const handleGoogleSignIn = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(getPostAuthRedirect())}`,
       }
     })
 

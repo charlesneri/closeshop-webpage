@@ -2,10 +2,12 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
-import { useAuthUserStore } from '@/stores/authUser'
+import {
+  getCurrentAuthUser,
+  getRiderRouteContext,
+} from '@/utils/riderAccess'
 
 const router = useRouter()
-const authStore = useAuthUserStore()
 
 // Stepper state
 const currentStep = ref(1)
@@ -17,6 +19,14 @@ const agreeTerms = ref(false)
 const showTermsDialog = ref(false)
 const isLoggedIn = ref(false)
 const userProfile = ref(null)
+const accessState = ref({
+  blocked: false,
+  reason: '',
+  status: '',
+  title: '',
+  message: '',
+})
+const latestApplication = ref(null)
 
 // File selection dialog
 const showFileOptionsDialog = ref(false)
@@ -83,6 +93,26 @@ const documents = ref({
   nbiClearance: null,
   nbiClearancePreview: null,
 })
+
+const stepSummaries = [
+  { value: 1, title: 'Personal Info', shortTitle: 'Profile' },
+  { value: 2, title: 'Vehicle Details', shortTitle: 'Vehicle' },
+  { value: 3, title: 'Documents', shortTitle: 'Docs' },
+  { value: 4, title: 'Review & Submit', shortTitle: 'Review' },
+]
+
+const formProgress = computed(() => (currentStep.value / stepSummaries.length) * 100)
+const uploadedRequiredDocuments = computed(() => (
+  ['validId', 'driversLicense', 'orCr'].filter((field) => !!documents.value[field]).length
+))
+const progressLabel = computed(() => {
+  const activeStep = stepSummaries.find((step) => step.value === currentStep.value)
+  return activeStep?.title || 'Application'
+})
+
+const blockedAlertType = computed(() => (
+  accessState.value.reason === 'application_rejected' ? 'error' : 'warning'
+))
 
 // Vehicle options
 const vehicleTypes = [
@@ -227,43 +257,35 @@ const getFullAddress = () => {
   return parts.join(', ')
 }
 
-// Check if user has an existing application
-const checkExistingApplication = async (profileId) => {
-  try {
-    const { data, error } = await supabase
-      .from('Rider_Registration')
-      .select('*')
-      .eq('profile_id', profileId)
-      .order('application_date', { ascending: false })
-      .limit(1)
-      .maybeSingle()
+const goToStatusPage = () => {
+  if (!latestApplication.value?.rider_id) return
 
-    if (error && error.code !== 'PGRST116') {
-      console.error('Error checking existing application:', error)
-      return null
-    }
+  router.push({
+    name: 'application-status',
+    params: { applicationId: latestApplication.value.rider_id }
+  })
+}
 
-    return data
-  } catch (error) {
-    console.error('Error:', error)
-    return null
-  }
+const contactSupport = () => {
+  window.location.href = 'mailto:support@closeshop.com?subject=Rider Application Access'
 }
 
 // Load user data from auth
 const loadUserData = async () => {
   try {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getCurrentAuthUser()
 
     if (user) {
       isLoggedIn.value = true
 
-      // Get profile
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
+      const {
+        profile,
+        latestApplication: existingApplication,
+        accessState: nextAccessState,
+      } = await getRiderRouteContext(user.id)
+
+      latestApplication.value = existingApplication
+      accessState.value = nextAccessState
 
       // Set user profile for header display
       const userName = `${profile?.first_name || user.user_metadata?.first_name || ''} ${profile?.last_name || user.user_metadata?.last_name || ''}`.trim() || 'User'
@@ -275,15 +297,7 @@ const loadUserData = async () => {
         role: profile?.role || 'user'
       }
 
-      // Check for existing application
-      const existingApplication = await checkExistingApplication(user.id)
-
-      // If user has an existing application, redirect to status page
-      if (existingApplication) {
-        router.push({
-          name: 'application-status',
-          params: { applicationId: existingApplication.rider_id }
-        })
+      if (accessState.value.blocked) {
         return
       }
 
@@ -520,7 +534,7 @@ const uploadFile = async (file, folder, fileName) => {
 
 // Submit application
 const submitApplication = async () => {
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getCurrentAuthUser()
 
   if (!user) {
     alert('Please login to submit your rider application')
@@ -535,7 +549,7 @@ const submitApplication = async () => {
 
   if (missingDocs.length > 0) {
     const confirmSubmit = confirm(
-      `⚠️ WARNING: You are missing the following required documents:\n\n` +
+      `WARNING: You are missing the following required documents:\n\n` +
       `- ${missingDocs.join('\n- ')}\n\n` +
       `Your application may be REJECTED or DELAYED significantly.\n\n` +
       `Do you still want to submit your application?`
@@ -653,9 +667,9 @@ const submitApplication = async () => {
         }
       ])
 
-    // Navigate to success page with application ID
+    // Navigate to the unified status page with the new application reference.
     router.push({
-      name: 'submitted-success',
+      name: 'application-status',
       params: { applicationId: data.rider_id }
     })
 
@@ -668,7 +682,7 @@ const submitApplication = async () => {
 }
 
 const goToProfile = () => {
-  router.push('/profile')
+  router.push('/rider-portal')
 }
 
 const logout = async () => {
@@ -692,33 +706,133 @@ onMounted(async () => {
       <p class="text-grey">Redirecting to login...</p>
     </div>
 
-    <!-- Main Application Form -->
-    <div v-else>
-      <!-- User Profile Header -->
+    <div v-else-if="accessState.blocked" class="application-shell">
       <v-card class="user-profile-header mb-6" elevation="2" rounded="xl">
-        <v-card-text class="pa-4">
-          <div class="d-flex align-center justify-space-between flex-wrap">
-            <div class="d-flex align-center">
-              <v-avatar size="64" class="mr-4">
+        <v-card-text class="pa-6 pa-md-8 text-center">
+          <v-icon :color="blockedAlertType === 'error' ? 'error' : 'warning'" size="56">
+            {{ blockedAlertType === 'error' ? 'mdi-alert-circle' : 'mdi-shield-alert-outline' }}
+          </v-icon>
+          <h2 class="mt-4 mb-3">{{ accessState.title }}</h2>
+          <p class="blocked-message mx-auto">
+            {{ accessState.message }}
+          </p>
+
+          <v-alert :type="blockedAlertType" variant="tonal" class="mt-5 text-left">
+            New rider applications are currently unavailable for this account.
+          </v-alert>
+
+          <div class="blocked-actions mt-6">
+            <v-btn
+              v-if="latestApplication?.rider_id"
+              color="primary"
+              size="large"
+              prepend-icon="mdi-clipboard-text-clock-outline"
+              @click="goToStatusPage"
+            >
+              View Application Status
+            </v-btn>
+            <v-btn
+              variant="outlined"
+              size="large"
+              prepend-icon="mdi-home"
+              @click="goToProfile"
+            >
+              Back to Rider Portal
+            </v-btn>
+            <v-btn
+              variant="text"
+              color="primary"
+              size="large"
+              prepend-icon="mdi-email-fast"
+              @click="contactSupport"
+            >
+              Contact Support
+            </v-btn>
+          </div>
+        </v-card-text>
+      </v-card>
+    </div>
+
+    <!-- Main Application Form -->
+    <div v-else class="application-shell">
+      <v-card class="user-profile-header mb-6" elevation="2" rounded="xl">
+        <v-card-text class="pa-4 pa-md-6">
+          <div class="profile-header-shell">
+            <div class="profile-identity">
+              <v-avatar size="68" class="profile-avatar">
                 <v-img :src="userProfile?.avatar" alt="User Avatar"></v-img>
               </v-avatar>
-              <div>
+              <div class="profile-copy">
+                <p class="profile-eyebrow mb-2">Rider onboarding</p>
                 <h2 class="text-h5 font-weight-bold mb-1">
                   Welcome back, {{ userProfile?.name || 'User' }}!
                 </h2>
-                <div class="d-flex align-center">
-                  <v-icon size="16" color="grey" class="mr-1">mdi-email</v-icon>
-                  <span class="text-caption text-grey">{{ userProfile?.email }}</span>
-                  <v-chip v-if="userProfile?.role === 'admin'" size="x-small" color="primary" class="ml-2">
+                <div class="profile-meta">
+                  <span class="profile-email">{{ userProfile?.email }}</span>
+                  <v-chip v-if="userProfile?.role === 'admin'" size="x-small" color="primary" class="ml-0 ml-sm-2">
                     Admin
                   </v-chip>
                 </div>
               </div>
             </div>
-            <div class="mt-2 mt-sm-0">
-              <v-btn variant="text" color="error" @click="logout" prepend-icon="mdi-logout">
+
+            <div class="profile-actions">
+              <v-chip class="steps-chip" color="primary" variant="tonal">
+                {{ stepSummaries.length }}-step application
+              </v-chip>
+              <v-btn class="header-logout-btn" variant="outlined" color="error" @click="logout" prepend-icon="mdi-logout">
                 Logout
               </v-btn>
+            </div>
+          </div>
+
+          <div class="header-progress-panel">
+            <div class="header-progress-copy">
+              <h3 class="header-progress-title">Complete your rider application</h3>
+              <p class="header-progress-subtitle">
+                Finish each step once, review everything carefully, and submit when you are ready.
+              </p>
+            </div>
+
+            <div class="header-progress-stats">
+              <div class="summary-stat">
+                <span class="summary-stat-value">{{ currentStep }}/{{ stepSummaries.length }}</span>
+                <span class="summary-stat-label">Current step</span>
+              </div>
+              <div class="summary-stat">
+                <span class="summary-stat-value">{{ uploadedRequiredDocuments }}/3</span>
+                <span class="summary-stat-label">Docs uploaded</span>
+              </div>
+              <div class="summary-stat">
+                <span class="summary-stat-value">{{ progressLabel }}</span>
+                <span class="summary-stat-label">Current focus</span>
+              </div>
+            </div>
+
+            <div class="progress-strip">
+              <div class="progress-strip-header">
+                <span>{{ progressLabel }}</span>
+                <span>{{ Math.round(formProgress) }}%</span>
+              </div>
+              <v-progress-linear
+                :model-value="formProgress"
+                color="primary"
+                bg-color="rgba(63, 131, 199, 0.12)"
+                height="10"
+                rounded
+              ></v-progress-linear>
+            </div>
+
+            <div class="step-chip-row">
+              <v-chip
+                v-for="step in stepSummaries"
+                :key="step.value"
+                :color="currentStep === step.value ? 'primary' : currentStep > step.value ? 'success' : 'grey-lighten-2'"
+                :variant="currentStep >= step.value ? 'flat' : 'tonal'"
+                class="step-status-chip"
+              >
+                {{ step.shortTitle }}
+              </v-chip>
             </div>
           </div>
         </v-card-text>
@@ -1694,14 +1808,22 @@ onMounted(async () => {
 
 <style scoped>
 .rider-application-container {
-  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  background:
+    radial-gradient(circle at top right, rgba(63, 131, 199, 0.12), transparent 30%),
+    linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
   min-height: 100vh;
-  padding: 20px 0 60px 0;
+  padding: 24px 0 72px;
+}
+
+.application-shell {
+  max-width: 1240px;
+  margin: 0 auto;
 }
 
 .user-profile-header {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid rgba(63, 131, 199, 0.2);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
   transition: all 0.3s ease;
 }
 
@@ -1710,20 +1832,193 @@ onMounted(async () => {
   box-shadow: 0 8px 20px rgba(63, 131, 199, 0.1) !important;
 }
 
+.profile-header-shell {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.profile-avatar {
+  border: 3px solid rgba(63, 131, 199, 0.16);
+  box-shadow: 0 10px 24px rgba(63, 131, 199, 0.18);
+}
+
+.profile-copy {
+  min-width: 0;
+}
+
+.profile-eyebrow {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #3f83c7;
+}
+
+.profile-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.profile-email {
+  font-size: 0.92rem;
+  color: #64748b;
+  overflow-wrap: anywhere;
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.blocked-message {
+  max-width: 760px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.blocked-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.steps-chip {
+  font-weight: 700;
+}
+
+.header-logout-btn {
+  border-color: rgba(239, 68, 68, 0.28) !important;
+  background: white !important;
+  font-weight: 600 !important;
+}
+
+.header-progress-panel {
+  margin-top: 24px;
+  padding: 22px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(63, 131, 199, 0.08), rgba(15, 23, 42, 0.02));
+  border: 1px solid rgba(63, 131, 199, 0.12);
+}
+
+.header-progress-copy {
+  margin-bottom: 18px;
+}
+
+.header-progress-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.header-progress-subtitle {
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.header-progress-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.summary-stat {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(63, 131, 199, 0.12);
+  min-width: 0;
+}
+
+.summary-stat-value {
+  display: block;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.summary-stat-label {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.progress-strip {
+  margin-bottom: 18px;
+}
+
+.progress-strip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.step-chip-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.step-status-chip {
+  font-weight: 700;
+}
+
 .application-stepper {
   background: transparent;
   margin: 20px auto;
   max-width: 1200px;
 }
 
+.application-stepper :deep(.v-stepper-header) {
+  gap: 8px;
+  padding: 8px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.04);
+}
+
+.application-stepper :deep(.v-stepper-item) {
+  min-width: 0;
+}
+
 .form-card {
-  border-radius: 20px;
+  border-radius: 28px;
   margin: 20px;
   overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.06) !important;
 }
 
 .form-section {
-  padding: 24px;
+  padding: 28px;
 }
 
 .section-title {
@@ -1738,17 +2033,23 @@ onMounted(async () => {
 }
 
 .form-actions {
-  padding: 16px 24px;
-  background: #f8fafc;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  padding: 18px 24px;
+  background: rgba(248, 250, 252, 0.96);
+  backdrop-filter: blur(16px);
   border-top: 1px solid #e2e8f0;
+  gap: 12px;
 }
 
 .document-upload-section {
   margin-bottom: 24px;
-  padding: 16px;
-  background: #f8fafc;
-  border-radius: 12px;
+  padding: 18px;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  border-radius: 18px;
   border: 1px solid #e2e8f0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .document-label {
@@ -1784,6 +2085,26 @@ onMounted(async () => {
 
 .review-panels {
   margin-top: 16px;
+}
+
+.review-panels :deep(.v-expansion-panel) {
+  border-radius: 18px !important;
+  margin-bottom: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.review-panels :deep(.v-table__wrapper) {
+  overflow-x: auto;
+}
+
+.review-panels :deep(table) {
+  min-width: 100%;
+}
+
+.review-panels :deep(td) {
+  padding: 14px 10px;
+  vertical-align: top;
 }
 
 .review-title {
@@ -1842,7 +2163,62 @@ onMounted(async () => {
 
 @media (max-width: 768px) {
   .rider-application-container {
-    padding: 10px 0 40px 0;
+    padding: 12px 0 48px;
+  }
+
+  .profile-header-shell,
+  .profile-identity,
+  .profile-actions {
+    align-items: stretch;
+  }
+
+  .profile-identity {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+
+  .blocked-actions {
+    flex-direction: column;
+  }
+
+  .blocked-actions .v-btn {
+    width: 100%;
+  }
+
+  .header-progress-panel {
+    padding: 18px;
+  }
+
+  .header-progress-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .application-stepper {
+    margin: 16px auto;
+  }
+
+  .application-stepper :deep(.v-stepper-header) {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+  }
+
+  .application-stepper :deep(.v-stepper-header::-webkit-scrollbar) {
+    display: none;
+  }
+
+  .application-stepper :deep(.v-stepper-item) {
+    min-width: 150px;
+  }
+
+  .application-stepper :deep(.v-stepper-item__subtitle) {
+    display: none;
   }
 
   .form-card {
@@ -1860,6 +2236,10 @@ onMounted(async () => {
 
   .document-upload-section {
     padding: 12px;
+  }
+
+  .form-actions {
+    padding: 16px;
   }
 
   .upload-buttons {
@@ -1887,6 +2267,20 @@ onMounted(async () => {
 
   .form-actions .v-btn {
     width: 100%;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+
+  .steps-chip,
+  .header-logout-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .progress-strip-header {
+    font-size: 0.82rem;
   }
 
   .section-title {

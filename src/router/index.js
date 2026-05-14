@@ -5,6 +5,10 @@ import ApplicationForm from '@/views/rider/ApplicationForm.vue'
 import LoginView from '@/views/mainsite/LoginView.vue'
 import SubmittedSuccess from '@/views/rider/SubmittedSuccess.vue'
 import CallbackView from '@/views/mainsite/auth/CallbackView.vue'
+import {
+  getCurrentAuthUser,
+  getRiderRouteContext,
+} from '@/utils/riderAccess'
 
 const routes = [
     {
@@ -29,6 +33,7 @@ const routes = [
       path: '/application-form',
       name: 'application-form',
       component: ApplicationForm,
+      meta: { requiresAuth: true, riderAccess: 'form' },
     },
 
     {
@@ -38,25 +43,108 @@ const routes = [
     },
 
     {
-      path: '/application-submitted/:applicationId?',
-      name: 'submitted-success',
-      component: SubmittedSuccess,
-    },
-    //
-    {
       path: '/application-status/:applicationId?',
       name: 'application-status',
-      component: () => import('@/views/rider/SubmittedSuccess.vue')
+      component: SubmittedSuccess,
+      meta: { requiresAuth: true, riderAccess: 'status' },
+    },
+    {
+      path: '/application-submitted/:applicationId?',
+      redirect: (to) => ({
+        name: 'application-status',
+        params: { applicationId: to.params.applicationId }
+      })
     },
     {
       path: '/submitted-success/:applicationId?',
-      redirect: '/application-status/:applicationId' // Redirect to unified status page
+      redirect: (to) => ({
+        name: 'application-status',
+        params: { applicationId: to.params.applicationId }
+      })
     },
   ]
 
   const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+const getRequestedApplicationId = (applicationId) => {
+  if (Array.isArray(applicationId)) {
+    return applicationId[0] || ''
+  }
+
+  return applicationId ? String(applicationId) : ''
+}
+
+router.beforeEach(async (to) => {
+  if (!to.matched.some((record) => record.meta.requiresAuth)) {
+    return true
+  }
+
+  try {
+    const user = await getCurrentAuthUser()
+
+    if (!user) {
+      return {
+        name: 'login',
+        query: { redirect: to.fullPath },
+      }
+    }
+
+    const { latestApplication, accessState } = await getRiderRouteContext(user.id)
+
+    if (to.meta.riderAccess === 'form') {
+      if (latestApplication) {
+        return {
+          name: 'application-status',
+          params: { applicationId: latestApplication.rider_id },
+          replace: true,
+        }
+      }
+
+      if (accessState.blocked) {
+        return {
+          name: 'rider-portal',
+          replace: true,
+        }
+      }
+
+      return true
+    }
+
+    if (to.meta.riderAccess === 'status') {
+      if (!latestApplication) {
+        if (accessState.blocked) {
+          return {
+            name: 'rider-portal',
+            replace: true,
+          }
+        }
+
+        return {
+          name: 'application-form',
+          replace: true,
+        }
+      }
+
+      const requestedApplicationId = getRequestedApplicationId(to.params.applicationId)
+      const latestApplicationId = String(latestApplication.rider_id || '')
+
+      if (requestedApplicationId !== latestApplicationId) {
+        return {
+          name: 'application-status',
+          params: { applicationId: latestApplication.rider_id },
+          replace: true,
+        }
+      }
+    }
+
+    return true
+  } catch (error) {
+    console.error('Unable to validate rider route access:', error)
+    return true
+  }
 })
 
 export default router

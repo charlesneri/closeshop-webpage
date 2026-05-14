@@ -41,7 +41,7 @@ const colorPalette = {
 
 // Using local images with correct paths
 const logoUrl = ref('/logo.png')
-const apkUrl = ref('/closeshop.apk')
+const apkUrl = ref('/CloseShop.apk')
 const isMobileDevice = ref(false)
 
 // Account creation guide images
@@ -276,7 +276,7 @@ const downloadAPK = async () => {
     // Create a direct link element for mobile compatibility
     const link = document.createElement('a')
     link.href = apkUrl.value
-    link.download = 'closeshop.apk'
+    link.download = 'CloseShop.apk'
 
     // For mobile devices, we need to handle it differently
     if (isMobileDevice.value) {

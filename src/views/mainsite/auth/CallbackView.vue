@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { supabase } from '@/utils/supabase'
 import { useAuthUserStore } from '@/stores/authUser'
+import { getSafeInternalPath } from '@/utils/riderAccess'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthUserStore()
 const status = ref('Processing your login...')
 const error = ref(null)
@@ -17,7 +19,7 @@ onMounted(async () => {
     if (sessionError) throw sessionError
 
     if (session?.user) {
-      status.value = 'Login successful! Redirecting to application form...'
+      status.value = 'Login successful! Redirecting you now...'
 
       // Check if user profile exists
       const { data: existingProfile } = await supabase
@@ -54,9 +56,11 @@ onMounted(async () => {
       // Update auth store
       await authStore.fetchUser()
 
-      // Redirect to application form
+      const redirectTarget = getSafeInternalPath(route.query.redirect, '/application-form')
+
+      // Return the rider to the route they originally requested after auth.
       setTimeout(() => {
-        router.push('/application-form')
+        router.push(redirectTarget)
       }, 1500)
     } else {
       throw new Error('No session found')
@@ -68,7 +72,7 @@ onMounted(async () => {
 
     // Redirect to login after 3 seconds
     setTimeout(() => {
-      router.push('/rider-login')
+      router.push('/login')
     }, 3000)
   }
 })
@@ -103,7 +107,7 @@ onMounted(async () => {
                 <h3 class="text-h5 font-weight-bold mb-2">Authentication Failed</h3>
                 <p class="text-grey">{{ error }}</p>
                 <p class="text-caption">Redirecting to login page...</p>
-                <v-btn color="primary" @click="router.push('/rider-login')" class="mt-4">
+                <v-btn color="primary" @click="router.push('/login')" class="mt-4">
                   Go to Login
                 </v-btn>
               </div>
