@@ -193,6 +193,7 @@
   const router = useRouter()
   const route = useRoute()
   const authStore = useAuthUserStore()
+  const OAUTH_REDIRECT_STORAGE_KEY = 'closeshop:rider-oauth-redirect'
 
 // Form references
 const loginFormRef = ref(null)
@@ -244,14 +245,23 @@ const getPostAuthRedirect = () => (
   getSafeInternalPath(route.query.redirect, '/application-form')
 )
 
+const storePendingOAuthRedirect = () => {
+  sessionStorage.setItem(OAUTH_REDIRECT_STORAGE_KEY, getPostAuthRedirect())
+}
+
 const getAppOrigin = () => {
   const configuredOrigin = String(import.meta.env.VITE_APP_URL || '').trim()
+  const currentOrigin = window.location.origin
+
+  if (currentOrigin) {
+    return currentOrigin.replace(/\/+$/, '')
+  }
 
   if (configuredOrigin) {
     return configuredOrigin.replace(/\/+$/, '')
   }
 
-  return window.location.origin
+  return ''
 }
 
 const getAuthCallbackUrl = () => `${getAppOrigin()}/auth/callback`
@@ -303,10 +313,12 @@ const handleGoogleSignIn = async () => {
   googleLoading.value = true
 
   try {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    storePendingOAuthRedirect()
+
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${getAuthCallbackUrl()}?redirect=${encodeURIComponent(getPostAuthRedirect())}`,
+        redirectTo: getAuthCallbackUrl(),
       }
     })
 

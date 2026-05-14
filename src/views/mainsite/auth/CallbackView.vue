@@ -10,10 +10,24 @@ const route = useRoute()
 const authStore = useAuthUserStore()
 const status = ref('Processing your login...')
 const error = ref(null)
+const OAUTH_REDIRECT_STORAGE_KEY = 'closeshop:rider-oauth-redirect'
 
-const getRedirectTarget = () => (
-  getSafeInternalPath(route.query.redirect, '/application-form')
-)
+const getRedirectTarget = () => {
+  const queryRedirect = getSafeInternalPath(route.query.redirect, '')
+
+  if (queryRedirect) {
+    sessionStorage.removeItem(OAUTH_REDIRECT_STORAGE_KEY)
+    return queryRedirect
+  }
+
+  const storedRedirect = getSafeInternalPath(
+    sessionStorage.getItem(OAUTH_REDIRECT_STORAGE_KEY),
+    '/application-form'
+  )
+
+  sessionStorage.removeItem(OAUTH_REDIRECT_STORAGE_KEY)
+  return storedRedirect
+}
 
 const getAuthCode = () => {
   const { code } = route.query
