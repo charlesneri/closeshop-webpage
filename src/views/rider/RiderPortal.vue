@@ -403,7 +403,7 @@
         </v-toolbar>
 
         <div class="application-form-container">
-          <ApplicationForm />
+          <ApplicationForm v-if="showApplicationForm" />
         </div>
       </v-card>
     </v-dialog>

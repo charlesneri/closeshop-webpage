@@ -57,6 +57,16 @@ const buildBlockedAccessState = ({ reason, status, title, message }) => ({
   message,
 })
 
+const isMissingAuthSessionError = (error) => {
+  const errorName = String(error?.name || '')
+  const errorMessage = String(error?.message || '')
+
+  return (
+    errorName === 'AuthSessionMissingError' ||
+    /auth session missing/i.test(errorMessage)
+  )
+}
+
 export const getSafeInternalPath = (targetPath, fallback = '/application-form') => {
   const normalizedTarget = Array.isArray(targetPath) ? targetPath[0] : targetPath
 
@@ -79,15 +89,32 @@ export const hasExistingRiderApplication = (application) => Boolean(application)
 
 export const getCurrentAuthUser = async () => {
   const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession()
+
+  if (sessionError && !isMissingAuthSessionError(sessionError)) {
+    throw sessionError
+  }
+
+  if (!session?.user) {
+    return null
+  }
+
+  const {
     data: { user },
     error,
   } = await supabase.auth.getUser()
+
+  if (error && isMissingAuthSessionError(error)) {
+    return null
+  }
 
   if (error) {
     throw error
   }
 
-  return user || null
+  return user || session.user || null
 }
 
 export const getRiderProfile = async (profileId) => {
