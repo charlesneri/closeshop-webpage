@@ -244,6 +244,18 @@ const getPostAuthRedirect = () => (
   getSafeInternalPath(route.query.redirect, '/application-form')
 )
 
+const getAppOrigin = () => {
+  const configuredOrigin = String(import.meta.env.VITE_APP_URL || '').trim()
+
+  if (configuredOrigin) {
+    return configuredOrigin.replace(/\/+$/, '')
+  }
+
+  return window.location.origin
+}
+
+const getAuthCallbackUrl = () => `${getAppOrigin()}/auth/callback`
+
 // Handle Login
 const handleLogin = async () => {
   if (!loginValid.value) return
@@ -294,7 +306,7 @@ const handleGoogleSignIn = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(getPostAuthRedirect())}`,
+        redirectTo: `${getAuthCallbackUrl()}?redirect=${encodeURIComponent(getPostAuthRedirect())}`,
       }
     })
 
@@ -327,7 +339,7 @@ const sendPasswordReset = async () => {
 
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.value, {
-      redirectTo: `${window.location.origin}/reset-password`
+      redirectTo: `${getAppOrigin()}/reset-password`
     })
 
     if (error) throw error

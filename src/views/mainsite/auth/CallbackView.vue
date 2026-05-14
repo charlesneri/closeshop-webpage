@@ -11,8 +11,43 @@ const authStore = useAuthUserStore()
 const status = ref('Processing your login...')
 const error = ref(null)
 
+const getRedirectTarget = () => (
+  getSafeInternalPath(route.query.redirect, '/application-form')
+)
+
+const getAuthCode = () => {
+  const { code } = route.query
+
+  if (Array.isArray(code)) {
+    return code[0] || ''
+  }
+
+  return code ? String(code) : ''
+}
+
+const cleanCallbackUrl = () => {
+  const nextUrl = new URL(window.location.href)
+
+  nextUrl.searchParams.delete('code')
+  nextUrl.searchParams.delete('scope')
+  nextUrl.searchParams.delete('authuser')
+  nextUrl.searchParams.delete('prompt')
+
+  window.history.replaceState({}, document.title, `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`)
+}
+
 onMounted(async () => {
   try {
+    const authCode = getAuthCode()
+
+    if (authCode) {
+      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(authCode)
+
+      if (exchangeError) throw exchangeError
+
+      cleanCallbackUrl()
+    }
+
     // Get the session after OAuth redirect
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
@@ -22,11 +57,15 @@ onMounted(async () => {
       status.value = 'Login successful! Redirecting you now...'
 
       // Check if user profile exists
-      const { data: existingProfile } = await supabase
+      const { data: existingProfile, error: profileLookupError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
-        .single()
+        .maybeSingle()
+
+      if (profileLookupError && profileLookupError.code !== 'PGRST116') {
+        throw profileLookupError
+      }
 
       // If profile doesn't exist, create one
       if (!existingProfile) {
@@ -56,12 +95,10 @@ onMounted(async () => {
       // Update auth store
       await authStore.fetchUser()
 
-      const redirectTarget = getSafeInternalPath(route.query.redirect, '/application-form')
+      const redirectTarget = getRedirectTarget()
 
       // Return the rider to the route they originally requested after auth.
-      setTimeout(() => {
-        router.push(redirectTarget)
-      }, 1500)
+      await router.replace(redirectTarget)
     } else {
       throw new Error('No session found')
     }
@@ -72,7 +109,10 @@ onMounted(async () => {
 
     // Redirect to login after 3 seconds
     setTimeout(() => {
-      router.push('/login')
+      router.replace({
+        name: 'login',
+        query: { redirect: getRedirectTarget() },
+      })
     }, 3000)
   }
 })
