@@ -57,7 +57,7 @@ const accountCreationImages = ref([
   },
   {
     id: 2,
-    src: '/CreateAccGuide/step002.png',
+    src: '/CreateAccGuide/step002.jpg',
     alt: 'Step 2 - Email verification',
     title: 'Step 2: Verify Your Email',
     description:
@@ -65,7 +65,7 @@ const accountCreationImages = ref([
   },
   {
     id: 3,
-    src: '/CreateAccGuide/step3.jpg',
+    src: '/CreateAccGuide/step03.jpg',
     alt: 'Step 3 - Login page',
     title: 'Step 3: Login to Your Account',
     description:
@@ -77,7 +77,7 @@ const accountCreationImages = ref([
 const shopGuideImages = ref([
   {
     id: 1,
-    src: '/CreateShopGuide/step1.jpg',
+    src: '/CreateShopGuide/step01.jpg',
     alt: 'Step 1 - Profile Page with Create Shop button',
     title: 'Step 1: Access Create Shop',
     description:
@@ -135,7 +135,7 @@ const navigationImages = ref([
   },
   {
     id: 'profile',
-    src: '/NavigatePage/profpage.jpg',
+    src: '/NavigatePage/profile.jpg',
     alt: 'Profile Page with user information',
     title: 'Profile Page',
     description:
